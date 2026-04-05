@@ -1,9 +1,9 @@
 .navLink {
   color: #ffffff;
-  font-weight: 400;
+  font-weight: 600;
   text-transform: uppercase;
-  letter-spacing: 0.2em;
-  font-size: clamp(0.8rem, 1.2vw, 1rem);
+  letter-spacing: 0.15em;
+  font-size: clamp(0.85rem, 1.2vw, 1.05rem);
   text-decoration: none;
   position: relative;
   transition: opacity 0.3s ease;
@@ -12,6 +12,7 @@
   padding: 0;
   font-family: var(--font-accent, "Extenda Hecto", sans-serif);
   display: inline-block;
+  text-shadow: 0 1px 4px rgba(0, 0, 0, 0.6);
 }
 
 .navLink:hover {

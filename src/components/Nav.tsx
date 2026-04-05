@@ -23,13 +23,18 @@ export default function Nav() {
     const handleScroll = () => {
       const current = window.scrollY;
       setScrolled(current > 40);
-      if (current < 50) {
-        // Always show at top
+
+      // Only start hiding after scrolling past the entire hero section (300vh)
+      const heroEl = document.getElementById('hero');
+      const heroEnd = heroEl ? heroEl.offsetTop + heroEl.offsetHeight : window.innerHeight;
+
+      if (current < heroEnd) {
+        // Always visible during hero
         setVisible(true);
-      } else if (current > lastScroll) {
-        // Scrolling down → hide
+      } else if (current > lastScroll + 5) {
+        // Scrolling down past hero → hide
         setVisible(false);
-      } else {
+      } else if (current < lastScroll - 5) {
         // Scrolling up → show
         setVisible(true);
       }
@@ -74,7 +79,9 @@ export default function Nav() {
       <nav
         className="fixed top-0 left-0 w-full z-50"
         style={{
-          background: scrolled ? 'rgba(10, 10, 10, 0.85)' : 'transparent',
+          background: scrolled
+            ? 'rgba(10, 10, 10, 0.9)'
+            : 'linear-gradient(180deg, rgba(0,0,0,0.45) 0%, transparent 100%)',
           backdropFilter: scrolled ? 'blur(12px)' : 'none',
           WebkitBackdropFilter: scrolled ? 'blur(12px)' : 'none',
           padding: '0 28px',
@@ -84,7 +91,7 @@ export default function Nav() {
       >
         <div className="mx-auto flex items-center justify-center h-[72px] max-w-[1400px] relative">
           {/* Desktop links */}
-          <ul className="hidden md:flex items-center justify-between w-full">
+          <ul className="hidden md:flex items-center justify-center gap-12">
             {NAV_LINKS.map((link) => (
               <li key={link.href}>
                 <a

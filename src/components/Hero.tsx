@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect, useRef, useCallback, useState } from 'react';
+import { useEffect, useRef, useCallback } from 'react';
 import gsap from 'gsap';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
 import styles from './Hero.module.css';
@@ -66,8 +66,9 @@ export default function Hero() {
   // Refs for each character part (keyed by id)
   const partRefs = useRef<Record<string, HTMLImageElement | null>>({});
 
-  // Stage indicator state
-  const [activeStage, setActiveStage] = useState(0);
+  // Stage indicator refs (imperative DOM updates avoid re-renders that reset GSAP opacity)
+  const stageLabelRef = useRef<HTMLSpanElement>(null);
+  const stageDotsRef = useRef<(HTMLDivElement | null)[]>([]);
 
   // Blink timer handles for cleanup
   const normalBlinkTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
@@ -102,10 +103,22 @@ export default function Hero() {
         scrub: 0.8,
         onUpdate: (self) => {
           const progress = self.progress;
-          if (progress < 0.25) setActiveStage(0);
-          else if (progress < 0.50) setActiveStage(1);
-          else if (progress < 0.75) setActiveStage(2);
-          else setActiveStage(3);
+          let stage: number;
+          if (progress < 0.25) stage = 0;
+          else if (progress < 0.50) stage = 1;
+          else if (progress < 0.75) stage = 2;
+          else stage = 3;
+
+          // Update DOM directly — no React re-render, no GSAP opacity reset
+          if (stageLabelRef.current) {
+            stageLabelRef.current.textContent = STAGE_LABELS[stage];
+          }
+          stageDotsRef.current.forEach((dot, i) => {
+            if (dot) dot.classList.toggle(styles.stageDotActive, i === stage);
+          });
+          if (ctaRef.current) {
+            ctaRef.current.classList.toggle(styles.ctaContainerVisible, stage === 3);
+          }
         },
       },
     });
@@ -298,12 +311,13 @@ export default function Hero() {
 
         {/* ── Stage indicator (I-IV) ──────────────────────────────── */}
         <div className={styles.stageIndicator} aria-hidden="true">
-          <span className={styles.stageLabel}>{STAGE_LABELS[activeStage]}</span>
+          <span ref={stageLabelRef} className={styles.stageLabel}>{STAGE_LABELS[0]}</span>
           <div className={styles.stageDots}>
             {STAGE_LABELS.map((_, i) => (
               <div
                 key={i}
-                className={`${styles.stageDot}${i === activeStage ? ` ${styles.stageDotActive}` : ''}`}
+                ref={(el) => { stageDotsRef.current[i] = el; }}
+                className={`${styles.stageDot}${i === 0 ? ` ${styles.stageDotActive}` : ''}`}
               />
             ))}
           </div>
@@ -320,7 +334,7 @@ export default function Hero() {
         {/* ── CTAs ────────────────────────────────────────────────── */}
         <div
           ref={ctaRef}
-          className={`${styles.ctaContainer}${activeStage === 3 ? ` ${styles.ctaContainerVisible}` : ''}`}
+          className={styles.ctaContainer}
         >
           <a href="#projetos" className={styles.ctaPrimary}>
             VER PROJETOS
