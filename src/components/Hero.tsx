@@ -150,9 +150,8 @@ export default function Hero() {
     /* 5. Mask appears from below (40-58%) */
     ft(p.mascara, { yPercent: 20, opacity: 0 }, { yPercent: 0, opacity: 1, duration: 0.18, ease: 'power2.out' }, 0.40);
 
-    // Hide sobrancelhas + oculos behind mask
+    // Hide sobrancelhas behind mask (oculos stay visible, covered by helmet via z-index)
     tw(p.sobrancelhas, { opacity: 0, duration: 0.12, ease: 'power1.in' }, 0.42);
-    tw(p.oculos, { opacity: 0, duration: 0.12, ease: 'power1.in' }, 0.42);
     // Normal eyes fade out
     tw(p.olhosAbertos, { opacity: 0, duration: 0.12, ease: 'power1.in' }, 0.43);
 
@@ -243,9 +242,11 @@ export default function Hero() {
   return (
     <div ref={wrapperRef} className={styles.heroWrapper} id="hero">
       <section className={styles.hero} aria-label="Hero">
-        {/* ── Decorative horizontal lines ─────────────────────────── */}
+        {/* ── Decorative lines ────────────────────────────────────── */}
         <div className={styles.lineHorizontalTop} aria-hidden="true" />
         <div className={styles.lineHorizontalBottom} aria-hidden="true" />
+        <div className={styles.lineVerticalLeft} aria-hidden="true" />
+        <div className={styles.lineVerticalRight} aria-hidden="true" />
 
         {/* ── Corner marks ────────────────────────────────────────── */}
         <div className={`${styles.cornerMark} ${styles.cornerTL}`} aria-hidden="true" />

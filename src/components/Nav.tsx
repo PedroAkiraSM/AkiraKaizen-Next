@@ -13,13 +13,27 @@ const NAV_LINKS = [
 type Lang = 'pt' | 'en';
 
 export default function Nav() {
+  const [visible, setVisible] = useState(true);
   const [scrolled, setScrolled] = useState(false);
   const [menuOpen, setMenuOpen] = useState(false);
   const [lang, setLang] = useState<Lang>('pt');
 
   useEffect(() => {
+    let lastScroll = 0;
     const handleScroll = () => {
-      setScrolled(window.scrollY > 40);
+      const current = window.scrollY;
+      setScrolled(current > 40);
+      if (current < 50) {
+        // Always show at top
+        setVisible(true);
+      } else if (current > lastScroll) {
+        // Scrolling down → hide
+        setVisible(false);
+      } else {
+        // Scrolling up → show
+        setVisible(true);
+      }
+      lastScroll = current;
     };
     window.addEventListener('scroll', handleScroll, { passive: true });
     handleScroll();
@@ -58,17 +72,19 @@ export default function Nav() {
   return (
     <>
       <nav
-        className="fixed top-0 left-0 w-full z-50 transition-all duration-500"
+        className="fixed top-0 left-0 w-full z-50"
         style={{
           background: scrolled ? 'rgba(10, 10, 10, 0.85)' : 'transparent',
           backdropFilter: scrolled ? 'blur(12px)' : 'none',
           WebkitBackdropFilter: scrolled ? 'blur(12px)' : 'none',
           padding: '0 28px',
+          transform: `translateY(${visible ? '0' : '-100%'})`,
+          transition: 'transform 0.3s ease, background 0.5s ease, backdrop-filter 0.5s ease',
         }}
       >
         <div className="mx-auto flex items-center justify-center h-[72px] max-w-[1400px] relative">
           {/* Desktop links */}
-          <ul className="hidden md:flex items-center justify-center gap-10">
+          <ul className="hidden md:flex items-center justify-between w-full">
             {NAV_LINKS.map((link) => (
               <li key={link.href}>
                 <a

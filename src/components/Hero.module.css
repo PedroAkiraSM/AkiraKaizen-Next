@@ -71,10 +71,29 @@
   position: absolute;
   left: 0;
   right: 0;
-  height: 1px;
-  background: rgba(255, 255, 255, 0.15);
+  height: 2px;
+  background: rgba(255, 255, 255, 0.3);
   z-index: 50;
   pointer-events: none;
+}
+
+.lineVerticalLeft,
+.lineVerticalRight {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  width: 1px;
+  background: rgba(255, 255, 255, 0.2);
+  z-index: 50;
+  pointer-events: none;
+}
+
+.lineVerticalLeft {
+  left: 28px;
+}
+
+.lineVerticalRight {
+  right: 28px;
 }
 
 .lineHorizontalTop {
@@ -424,6 +443,13 @@
   }
   .lineHorizontalBottom {
     bottom: 50px;
+  }
+
+  .lineVerticalLeft {
+    left: 16px;
+  }
+  .lineVerticalRight {
+    right: 16px;
   }
 
   .ctaContainer {
