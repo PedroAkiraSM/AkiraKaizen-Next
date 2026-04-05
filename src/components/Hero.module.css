@@ -1,0 +1,437 @@
+/* ── Hero Wrapper & Sticky Viewport ──────────────────────────────── */
+
+.heroWrapper {
+  position: relative;
+  height: 300vh;
+  width: 100%;
+}
+
+.hero {
+  position: sticky;
+  top: 0;
+  height: 100vh;
+  width: 100%;
+  background: var(--accent, #fc193b);
+  overflow: hidden;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+/* ── Background Text ─────────────────────────────────────────────── */
+
+.bgText {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  pointer-events: none;
+  z-index: 1;
+  overflow: hidden;
+}
+
+.bgTextInner {
+  font-family: var(--font-accent, "Extenda Hecto", sans-serif);
+  font-size: clamp(4rem, 14vw, 16rem);
+  font-weight: 900;
+  color: #ffffff;
+  white-space: nowrap;
+  line-height: 1;
+  text-align: center;
+  user-select: none;
+  letter-spacing: 0.04em;
+  will-change: transform, opacity;
+}
+
+/* ── Character Container ─────────────────────────────────────────── */
+
+.characterContainer {
+  position: absolute;
+  bottom: 0;
+  left: 50%;
+  transform: translateX(-50%);
+  width: min(100%, 1440px);
+  aspect-ratio: 1440 / 900;
+  z-index: 5;
+  pointer-events: none;
+}
+
+.part {
+  position: absolute;
+  display: block;
+  will-change: transform, opacity;
+  pointer-events: none;
+}
+
+/* ── Decorative Lines ────────────────────────────────────────────── */
+
+.lineHorizontalTop,
+.lineHorizontalBottom {
+  position: absolute;
+  left: 0;
+  right: 0;
+  height: 1px;
+  background: rgba(255, 255, 255, 0.15);
+  z-index: 50;
+  pointer-events: none;
+}
+
+.lineHorizontalTop {
+  top: 70px;
+}
+
+.lineHorizontalBottom {
+  bottom: 70px;
+}
+
+/* ── Vertical Side Text ──────────────────────────────────────────── */
+
+.sideTextLeft,
+.sideTextRight {
+  position: absolute;
+  z-index: 50;
+  pointer-events: none;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 1.5rem;
+}
+
+.sideTextLeft {
+  left: 28px;
+  top: 50%;
+  transform: translateY(-50%);
+}
+
+.sideTextRight {
+  right: 28px;
+  top: 50%;
+  transform: translateY(-50%);
+}
+
+.verticalText {
+  writing-mode: vertical-rl;
+  text-orientation: mixed;
+  font-size: 0.6rem;
+  font-weight: 700;
+  letter-spacing: 0.25em;
+  text-transform: uppercase;
+  color: rgba(255, 255, 255, 0.3);
+  font-family: var(--font-display, "Sora", sans-serif);
+}
+
+.verticalTextKanji {
+  writing-mode: vertical-rl;
+  text-orientation: upright;
+  font-size: 1rem;
+  font-weight: 400;
+  color: rgba(255, 255, 255, 0.3);
+  font-family: var(--font-kanji, "Noto Serif JP", serif);
+}
+
+.verticalTextPage {
+  writing-mode: vertical-rl;
+  text-orientation: mixed;
+  font-size: 0.6rem;
+  font-weight: 700;
+  letter-spacing: 0.25em;
+  color: rgba(255, 255, 255, 0.3);
+  font-family: var(--font-display, "Sora", sans-serif);
+}
+
+/* ── Corner Marks ────────────────────────────────────────────────── */
+
+.cornerMark {
+  position: absolute;
+  width: 24px;
+  height: 24px;
+  z-index: 50;
+  pointer-events: none;
+}
+
+.cornerMark::before,
+.cornerMark::after {
+  content: "";
+  position: absolute;
+  background: rgba(255, 255, 255, 0.25);
+}
+
+/* Top-left */
+.cornerTL {
+  top: 70px;
+  left: 28px;
+}
+.cornerTL::before {
+  top: 0;
+  left: 0;
+  width: 24px;
+  height: 1px;
+}
+.cornerTL::after {
+  top: 0;
+  left: 0;
+  width: 1px;
+  height: 24px;
+}
+
+/* Top-right */
+.cornerTR {
+  top: 70px;
+  right: 28px;
+}
+.cornerTR::before {
+  top: 0;
+  right: 0;
+  width: 24px;
+  height: 1px;
+}
+.cornerTR::after {
+  top: 0;
+  right: 0;
+  width: 1px;
+  height: 24px;
+}
+
+/* Bottom-left */
+.cornerBL {
+  bottom: 70px;
+  left: 28px;
+}
+.cornerBL::before {
+  bottom: 0;
+  left: 0;
+  width: 24px;
+  height: 1px;
+}
+.cornerBL::after {
+  bottom: 0;
+  left: 0;
+  width: 1px;
+  height: 24px;
+}
+
+/* Bottom-right */
+.cornerBR {
+  bottom: 70px;
+  right: 28px;
+}
+.cornerBR::before {
+  bottom: 0;
+  right: 0;
+  width: 24px;
+  height: 1px;
+}
+.cornerBR::after {
+  bottom: 0;
+  right: 0;
+  width: 1px;
+  height: 24px;
+}
+
+/* ── Stage Indicator ─────────────────────────────────────────────── */
+
+.stageIndicator {
+  position: absolute;
+  right: 28px;
+  bottom: 120px;
+  z-index: 50;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  align-items: center;
+  pointer-events: none;
+}
+
+.stageLabel {
+  font-family: var(--font-display, "Sora", sans-serif);
+  font-size: 0.55rem;
+  font-weight: 700;
+  letter-spacing: 0.3em;
+  text-transform: uppercase;
+  color: rgba(255, 255, 255, 0.4);
+}
+
+.stageDots {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  align-items: center;
+}
+
+.stageDot {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  border: 1px solid rgba(255, 255, 255, 0.3);
+  background: transparent;
+  transition: background 0.3s ease, border-color 0.3s ease;
+}
+
+.stageDotActive {
+  background: #ffffff;
+  border-color: #ffffff;
+}
+
+/* ── Scroll Indicator ────────────────────────────────────────────── */
+
+.scrollIndicator {
+  position: absolute;
+  bottom: 28px;
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 50;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+  pointer-events: none;
+}
+
+.scrollText {
+  font-family: var(--font-display, "Sora", sans-serif);
+  font-size: 0.55rem;
+  font-weight: 700;
+  letter-spacing: 0.3em;
+  text-transform: uppercase;
+  color: rgba(255, 255, 255, 0.5);
+}
+
+.scrollLine {
+  width: 1px;
+  height: 40px;
+  position: relative;
+  overflow: hidden;
+  background: rgba(255, 255, 255, 0.15);
+}
+
+.scrollLineFill {
+  position: absolute;
+  top: -100%;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: #ffffff;
+  animation: scrollPulse 2s ease-in-out infinite;
+}
+
+@keyframes scrollPulse {
+  0% {
+    top: -100%;
+  }
+  50% {
+    top: 0;
+  }
+  100% {
+    top: 100%;
+  }
+}
+
+/* ── CTAs ────────────────────────────────────────────────────────── */
+
+.ctaContainer {
+  position: absolute;
+  bottom: 100px;
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 55;
+  display: flex;
+  gap: 16px;
+  align-items: center;
+  opacity: 0;
+  pointer-events: none;
+}
+
+.ctaContainerVisible {
+  pointer-events: auto;
+}
+
+.ctaPrimary {
+  padding: 12px 32px;
+  background: #ffffff;
+  color: var(--accent, #fc193b);
+  font-family: var(--font-display, "Sora", sans-serif);
+  font-size: 0.75rem;
+  font-weight: 700;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  border: none;
+  cursor: pointer;
+  transition: background 0.3s ease, transform 0.2s ease;
+  text-decoration: none;
+  white-space: nowrap;
+}
+
+.ctaPrimary:hover {
+  background: rgba(255, 255, 255, 0.9);
+  transform: translateY(-2px);
+}
+
+.ctaSecondary {
+  padding: 12px 32px;
+  background: transparent;
+  color: #ffffff;
+  font-family: var(--font-display, "Sora", sans-serif);
+  font-size: 0.75rem;
+  font-weight: 700;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  border: 1px solid rgba(255, 255, 255, 0.4);
+  cursor: pointer;
+  transition: background 0.3s ease, border-color 0.3s ease, transform 0.2s ease;
+  text-decoration: none;
+  white-space: nowrap;
+}
+
+.ctaSecondary:hover {
+  background: rgba(255, 255, 255, 0.1);
+  border-color: rgba(255, 255, 255, 0.7);
+  transform: translateY(-2px);
+}
+
+/* ── Responsive ──────────────────────────────────────────────────── */
+
+@media (max-width: 768px) {
+  .sideTextLeft,
+  .sideTextRight {
+    display: none;
+  }
+
+  .stageIndicator {
+    right: 16px;
+    bottom: 100px;
+  }
+
+  .cornerTL {
+    top: 70px;
+    left: 16px;
+  }
+  .cornerTR {
+    top: 70px;
+    right: 16px;
+  }
+  .cornerBL {
+    bottom: 70px;
+    left: 16px;
+  }
+  .cornerBR {
+    bottom: 70px;
+    right: 16px;
+  }
+
+  .lineHorizontalTop {
+    top: 50px;
+  }
+  .lineHorizontalBottom {
+    bottom: 50px;
+  }
+
+  .ctaContainer {
+    flex-direction: column;
+    bottom: 80px;
+  }
+
+  .bgTextInner {
+    font-size: clamp(3rem, 12vw, 8rem);
+  }
+}

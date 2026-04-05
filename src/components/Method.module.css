@@ -1,0 +1,125 @@
+/* ── Pillar Cards ──────────────────────────────────────────────────── */
+
+.pillar {
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  padding: 2.5rem 2rem;
+  background: var(--bg-alt);
+  transition: border-color 0.4s ease, transform 0.4s ease, box-shadow 0.4s ease;
+  position: relative;
+  overflow: hidden;
+}
+
+.pillar::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: radial-gradient(
+    ellipse at 50% 0%,
+    rgba(252, 25, 59, 0.06) 0%,
+    transparent 70%
+  );
+  opacity: 0;
+  transition: opacity 0.4s ease;
+}
+
+.pillar:hover {
+  border-color: var(--accent);
+  transform: translateY(-4px);
+  box-shadow: 0 8px 32px rgba(252, 25, 59, 0.08);
+}
+
+.pillar:hover::before {
+  opacity: 1;
+}
+
+.pillarIcon {
+  width: 48px;
+  height: 48px;
+  margin-bottom: 1.5rem;
+  color: var(--accent);
+}
+
+/* ── Timeline ─────────────────────────────────────────────────────── */
+
+.timelineTrack {
+  position: relative;
+  height: 3px;
+  background: var(--border);
+  border-radius: 2px;
+  overflow: hidden;
+}
+
+.timelineFill {
+  position: absolute;
+  top: 0;
+  left: 0;
+  height: 100%;
+  width: 0%;
+  background: linear-gradient(90deg, var(--accent), var(--gold));
+  border-radius: 2px;
+  transition: none;
+}
+
+.timelineStep {
+  text-align: center;
+  opacity: 0.3;
+  transition: opacity 0.5s ease;
+  flex: 1;
+}
+
+.timelineStep.active {
+  opacity: 1;
+}
+
+.stepNumber {
+  font-family: var(--font-display);
+  font-size: 0.75rem;
+  font-weight: 700;
+  letter-spacing: 0.15em;
+  color: var(--accent);
+  margin-bottom: 0.5rem;
+}
+
+.stepTitle {
+  font-family: var(--font-display);
+  font-size: 1rem;
+  font-weight: 700;
+  color: var(--text);
+  margin-bottom: 0.25rem;
+}
+
+.stepDesc {
+  font-family: var(--font-body);
+  font-size: 0.8rem;
+  color: var(--text-muted);
+  line-height: 1.5;
+}
+
+.stepDot {
+  width: 12px;
+  height: 12px;
+  border-radius: 50%;
+  border: 2px solid var(--border);
+  background: var(--bg);
+  margin: 0 auto 1rem;
+  transition: border-color 0.4s ease, background 0.4s ease, box-shadow 0.4s ease;
+}
+
+.timelineStep.active .stepDot {
+  border-color: var(--accent);
+  background: var(--accent);
+  box-shadow: 0 0 12px rgba(252, 25, 59, 0.4);
+}
+
+/* ── Mobile Timeline ──────────────────────────────────────────────── */
+
+@media (max-width: 767px) {
+  .timelineStep {
+    text-align: left;
+  }
+
+  .stepDot {
+    margin: 0;
+  }
+}
