@@ -170,75 +170,59 @@
   transform: scaleX(1);
 }
 
-/* -- Timeline -- */
+/* -- Timeline (horizontal) -- */
 
 .timeline {
   position: relative;
-  padding-left: 2.5rem;
+  display: grid;
+  grid-template-columns: repeat(5, 1fr);
+  gap: 0;
+  margin-top: 2rem;
 }
-
-@media (min-width: 768px) {
-  .timeline {
-    padding-left: 4rem;
-  }
-}
-
-/* -- Vertical Line -- */
 
 .timelineLine {
-  position: absolute;
-  top: 0;
-  bottom: 0;
-  left: 1.05rem;
-  width: 2px;
-  background: var(--border);
-}
-
-@media (min-width: 768px) {
-  .timelineLine {
-    left: 1.55rem;
-  }
+  display: none;
 }
 
 /* -- Timeline Step -- */
 
 .timelineStep {
   display: flex;
-  align-items: flex-start;
-  gap: 1rem;
-  padding-bottom: 2.5rem;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  padding: 0 1rem;
   position: relative;
 }
 
-.timelineStep:last-child {
-  padding-bottom: 0;
+/* Horizontal connecting line between steps */
+.timelineStep::before {
+  content: "";
+  position: absolute;
+  top: 28px;
+  left: 0;
+  right: 0;
+  height: 1px;
+  background: var(--border);
 }
 
-@media (min-width: 768px) {
-  .timelineStep {
-    gap: 1.5rem;
-    padding-bottom: 3rem;
-  }
+.timelineStep:first-child::before {
+  left: 50%;
 }
 
-/* -- Step Indicator (number + dot) -- */
+.timelineStep:last-child::before {
+  right: 50%;
+}
+
+/* -- Step Indicator -- */
 
 .stepIndicator {
   display: flex;
   flex-direction: column;
   align-items: center;
-  flex-shrink: 0;
   position: relative;
   z-index: 1;
-  margin-left: -2.5rem;
-  width: 2.5rem;
-}
-
-@media (min-width: 768px) {
-  .stepIndicator {
-    margin-left: -4rem;
-    width: 4rem;
-  }
+  margin-bottom: 1.25rem;
 }
 
 .stepNum {
@@ -247,12 +231,12 @@
   font-weight: 700;
   letter-spacing: 0.15em;
   color: var(--accent);
-  margin-bottom: 0.35rem;
+  margin-bottom: 0.5rem;
 }
 
 .stepDot {
-  width: 10px;
-  height: 10px;
+  width: 12px;
+  height: 12px;
   border-radius: 50%;
   border: 2px solid var(--accent);
   background: var(--bg);
@@ -267,7 +251,7 @@
 /* -- Step Body -- */
 
 .stepBody {
-  padding-top: 0.1rem;
+  max-width: 200px;
 }
 
 .stepTitle {
@@ -275,7 +259,7 @@
   font-size: 1rem;
   font-weight: 700;
   color: var(--text);
-  margin: 0 0 0.25rem 0;
+  margin: 0 0 0.5rem 0;
   transition: color 0.3s ease;
 }
 
@@ -283,22 +267,40 @@
   color: var(--accent);
 }
 
-@media (min-width: 768px) {
-  .stepTitle {
-    font-size: 1.1rem;
-  }
-}
-
 .stepDesc {
   font-family: var(--font-body, "DM Sans", sans-serif);
-  font-size: 0.85rem;
-  line-height: 1.55;
+  font-size: 0.82rem;
+  line-height: 1.6;
   color: var(--text-muted);
   margin: 0;
 }
 
-@media (min-width: 768px) {
-  .stepDesc {
-    font-size: 0.9rem;
+/* -- Mobile: stack timeline vertically -- */
+
+@media (max-width: 768px) {
+  .timeline {
+    grid-template-columns: 1fr;
+    gap: 2rem;
+  }
+
+  .timelineStep {
+    flex-direction: row;
+    text-align: left;
+    align-items: flex-start;
+    gap: 1rem;
+    padding: 0;
+  }
+
+  .timelineStep::before {
+    display: none;
+  }
+
+  .stepIndicator {
+    margin-bottom: 0;
+    flex-shrink: 0;
+  }
+
+  .stepBody {
+    max-width: none;
   }
 }

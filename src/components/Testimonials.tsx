@@ -28,17 +28,10 @@ const TESTIMONIALS = [
   },
 ];
 
-const STATS = [
-  { value: '7', label: 'Projetos em produção' },
-  { value: '99.9%', label: 'Uptime garantido' },
-  { value: '<24h', label: 'Tempo de resposta' },
-  { value: '∞', label: 'Suporte contínuo' },
-];
 
 export default function Testimonials() {
   const sectionRef = useRef<HTMLElement>(null);
   const cardRefs = useRef<(HTMLDivElement | null)[]>([]);
-  const statRefs = useRef<(HTMLDivElement | null)[]>([]);
 
   useEffect(() => {
     const ctx = gsap.context(() => {
@@ -55,25 +48,6 @@ export default function Testimonials() {
             scrollTrigger: {
               trigger: card!,
               start: 'top 88%',
-              toggleActions: 'play none none none',
-            },
-          },
-        );
-      });
-
-      statRefs.current.filter(Boolean).forEach((stat, i) => {
-        gsap.fromTo(
-          stat!,
-          { y: 30, opacity: 0 },
-          {
-            y: 0,
-            opacity: 1,
-            duration: 0.6,
-            delay: i * 0.1,
-            ease: 'power3.out',
-            scrollTrigger: {
-              trigger: stat!,
-              start: 'top 90%',
               toggleActions: 'play none none none',
             },
           },
@@ -109,18 +83,6 @@ export default function Testimonials() {
           ))}
         </div>
 
-        <div className={styles.statsRow}>
-          {STATS.map((s, i) => (
-            <div
-              key={i}
-              ref={(el) => { statRefs.current[i] = el; }}
-              className={styles.statItem}
-            >
-              <span className={styles.statValue}>{s.value}</span>
-              <span className={styles.statLabel}>{s.label}</span>
-            </div>
-          ))}
-        </div>
       </div>
     </section>
   );

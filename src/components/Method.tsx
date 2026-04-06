@@ -10,27 +10,47 @@ gsap.registerPlugin(ScrollTrigger);
 const PILLARS = [
   {
     kanji: '\u5206\u6790',
-    title: 'Analise Sistemica',
-    desc: 'Entendemos o sistema inteiro, nao a demanda isolada.',
+    title: 'An\u00e1lise Sist\u00eamica',
+    desc: 'Antes de escrever uma linha de c\u00f3digo, mergulhamos no seu neg\u00f3cio. Entendemos o ecossistema completo: seus clientes, processos, dores e objetivos. Isso garante que a solu\u00e7\u00e3o resolva o problema real, n\u00e3o apenas o sintoma.',
   },
   {
     kanji: '\u6280\u8853',
-    title: 'Profundidade Tecnica',
-    desc: 'Dominio real em multiplos stacks. Nao usamos templates.',
+    title: 'Profundidade T\u00e9cnica',
+    desc: 'Dom\u00ednio real em m\u00faltiplas tecnologias: Laravel, React, Next.js, bancos de dados, APIs e infraestrutura. Escolhemos a ferramenta certa para cada problema. N\u00e3o usamos templates gen\u00e9ricos \u2014 cada projeto \u00e9 constru\u00eddo sob medida.',
   },
   {
     kanji: '\u6559\u80B2',
-    title: 'Educacao Integrada',
-    desc: 'Clientes entendem suas solucoes. Transparencia total.',
+    title: 'Educa\u00e7\u00e3o Integrada',
+    desc: 'Voc\u00ea n\u00e3o recebe apenas um sistema pronto. Recebe documenta\u00e7\u00e3o completa, treinamento e o conhecimento necess\u00e1rio para operar e evoluir sua solu\u00e7\u00e3o. Transpar\u00eancia total em cada etapa do processo.',
   },
 ];
 
 const STEPS = [
-  { num: '01', title: 'Discovery', desc: 'Imersao no problema e contexto do cliente.' },
-  { num: '02', title: 'Design', desc: 'Arquitetura da solucao e prototipacao visual.' },
-  { num: '03', title: 'Develop', desc: 'Desenvolvimento iterativo com feedback constante.' },
-  { num: '04', title: 'Deploy', desc: 'Lancamento otimizado e monitoramento ativo.' },
-  { num: '05', title: 'Support', desc: 'Evolucao continua apos a entrega.' },
+  {
+    num: '01',
+    title: 'Discovery',
+    desc: 'Reunimos todas as informa\u00e7\u00f5es sobre seu projeto: objetivos de neg\u00f3cio, p\u00fablico-alvo, requisitos t\u00e9cnicos e prazo. Sa\u00edmos dessa fase com um escopo claro e alinhado.',
+  },
+  {
+    num: '02',
+    title: 'Design',
+    desc: 'Criamos a arquitetura do sistema e prot\u00f3tipos visuais interativos. Voc\u00ea visualiza e aprova cada tela antes do desenvolvimento come\u00e7ar.',
+  },
+  {
+    num: '03',
+    title: 'Develop',
+    desc: 'Desenvolvimento iterativo com entregas semanais. Voc\u00ea acompanha o progresso em tempo real e d\u00e1 feedback a cada ciclo.',
+  },
+  {
+    num: '04',
+    title: 'Deploy',
+    desc: 'Lan\u00e7amento otimizado com testes de performance, seguran\u00e7a e monitoramento. Garantimos que tudo funcione perfeitamente desde o primeiro dia.',
+  },
+  {
+    num: '05',
+    title: 'Support',
+    desc: 'N\u00e3o desaparecemos ap\u00f3s a entrega. Oferecemos suporte cont\u00ednuo, manuten\u00e7\u00e3o preventiva e evolu\u00e7\u00f5es conforme seu neg\u00f3cio cresce.',
+  },
 ];
 
 export default function Method() {
