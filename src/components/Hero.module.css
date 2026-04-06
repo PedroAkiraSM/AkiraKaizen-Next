@@ -18,6 +18,17 @@
   justify-content: center;
 }
 
+/* ── Decorative Frame (single border, replaces 8 divs) ──────────── */
+
+.hero::after {
+  content: "";
+  position: absolute;
+  inset: 40px;
+  border: 3px solid rgba(255, 255, 255, 0.25);
+  z-index: 50;
+  pointer-events: none;
+}
+
 /* ── Background Text ─────────────────────────────────────────────── */
 
 .bgText {
@@ -32,15 +43,17 @@
 }
 
 .bgTextInner {
-  font-family: var(--font-accent, "Extenda Hecto", sans-serif);
-  font-size: clamp(4rem, 14vw, 16rem);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  font-family: var(--font-display, "Sora", sans-serif);
+  font-size: clamp(4rem, 12vw, 14rem);
   font-weight: 900;
   color: #ffffff;
-  white-space: nowrap;
-  line-height: 1;
+  line-height: 0.9;
   text-align: center;
   user-select: none;
-  letter-spacing: 0.04em;
+  letter-spacing: 0.06em;
   will-change: transform, opacity;
 }
 
@@ -64,52 +77,12 @@
   pointer-events: none;
 }
 
-/* ── Decorative Lines ────────────────────────────────────────────── */
-
-.lineHorizontalTop,
-.lineHorizontalBottom {
-  position: absolute;
-  left: 0;
-  right: 0;
-  height: 2px;
-  background: rgba(255, 255, 255, 0.3);
-  z-index: 50;
-  pointer-events: none;
-}
-
-.lineVerticalLeft,
-.lineVerticalRight {
-  position: absolute;
-  top: 0;
-  bottom: 0;
-  width: 1px;
-  background: rgba(255, 255, 255, 0.2);
-  z-index: 50;
-  pointer-events: none;
-}
-
-.lineVerticalLeft {
-  left: 28px;
-}
-
-.lineVerticalRight {
-  right: 28px;
-}
-
-.lineHorizontalTop {
-  top: 70px;
-}
-
-.lineHorizontalBottom {
-  bottom: 70px;
-}
-
 /* ── Vertical Side Text ──────────────────────────────────────────── */
 
 .sideTextLeft,
 .sideTextRight {
   position: absolute;
-  z-index: 50;
+  z-index: 51;
   pointer-events: none;
   display: flex;
   flex-direction: column;
@@ -118,13 +91,13 @@
 }
 
 .sideTextLeft {
-  left: 28px;
+  left: 14px;
   top: 50%;
   transform: translateY(-50%);
 }
 
 .sideTextRight {
-  right: 28px;
+  right: 14px;
   top: 50%;
   transform: translateY(-50%);
 }
@@ -159,102 +132,13 @@
   font-family: var(--font-display, "Sora", sans-serif);
 }
 
-/* ── Corner Marks ────────────────────────────────────────────────── */
-
-.cornerMark {
-  position: absolute;
-  width: 24px;
-  height: 24px;
-  z-index: 50;
-  pointer-events: none;
-}
-
-.cornerMark::before,
-.cornerMark::after {
-  content: "";
-  position: absolute;
-  background: rgba(255, 255, 255, 0.25);
-}
-
-/* Top-left */
-.cornerTL {
-  top: 70px;
-  left: 28px;
-}
-.cornerTL::before {
-  top: 0;
-  left: 0;
-  width: 24px;
-  height: 1px;
-}
-.cornerTL::after {
-  top: 0;
-  left: 0;
-  width: 1px;
-  height: 24px;
-}
-
-/* Top-right */
-.cornerTR {
-  top: 70px;
-  right: 28px;
-}
-.cornerTR::before {
-  top: 0;
-  right: 0;
-  width: 24px;
-  height: 1px;
-}
-.cornerTR::after {
-  top: 0;
-  right: 0;
-  width: 1px;
-  height: 24px;
-}
-
-/* Bottom-left */
-.cornerBL {
-  bottom: 70px;
-  left: 28px;
-}
-.cornerBL::before {
-  bottom: 0;
-  left: 0;
-  width: 24px;
-  height: 1px;
-}
-.cornerBL::after {
-  bottom: 0;
-  left: 0;
-  width: 1px;
-  height: 24px;
-}
-
-/* Bottom-right */
-.cornerBR {
-  bottom: 70px;
-  right: 28px;
-}
-.cornerBR::before {
-  bottom: 0;
-  right: 0;
-  width: 24px;
-  height: 1px;
-}
-.cornerBR::after {
-  bottom: 0;
-  right: 0;
-  width: 1px;
-  height: 24px;
-}
-
 /* ── Stage Indicator ─────────────────────────────────────────────── */
 
 .stageIndicator {
   position: absolute;
-  right: 28px;
+  right: 14px;
   bottom: 120px;
-  z-index: 50;
+  z-index: 51;
   display: flex;
   flex-direction: column;
   gap: 8px;
@@ -296,10 +180,10 @@
 
 .scrollIndicator {
   position: absolute;
-  bottom: 28px;
+  bottom: 14px;
   left: 50%;
   transform: translateX(-50%);
-  z-index: 50;
+  z-index: 51;
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -375,7 +259,6 @@
   letter-spacing: 0.2em;
   text-transform: uppercase;
   border: none;
-  cursor: pointer;
   transition: background 0.3s ease, transform 0.2s ease;
   text-decoration: none;
   white-space: nowrap;
@@ -396,7 +279,6 @@
   letter-spacing: 0.2em;
   text-transform: uppercase;
   border: 1px solid rgba(255, 255, 255, 0.4);
-  cursor: pointer;
   transition: background 0.3s ease, border-color 0.3s ease, transform 0.2s ease;
   text-decoration: none;
   white-space: nowrap;
@@ -416,40 +298,14 @@
     display: none;
   }
 
+  .hero::after {
+    inset: 20px;
+    border-width: 2px;
+  }
+
   .stageIndicator {
-    right: 16px;
+    right: 8px;
     bottom: 100px;
-  }
-
-  .cornerTL {
-    top: 70px;
-    left: 16px;
-  }
-  .cornerTR {
-    top: 70px;
-    right: 16px;
-  }
-  .cornerBL {
-    bottom: 70px;
-    left: 16px;
-  }
-  .cornerBR {
-    bottom: 70px;
-    right: 16px;
-  }
-
-  .lineHorizontalTop {
-    top: 50px;
-  }
-  .lineHorizontalBottom {
-    bottom: 50px;
-  }
-
-  .lineVerticalLeft {
-    left: 16px;
-  }
-  .lineVerticalRight {
-    right: 16px;
   }
 
   .ctaContainer {

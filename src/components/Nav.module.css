@@ -10,7 +10,7 @@
   background: none;
   border: none;
   padding: 0;
-  font-family: var(--font-accent, "Extenda Hecto", sans-serif);
+  font-family: var(--font-display, "Sora", sans-serif);
   display: inline-block;
   text-shadow: 0 1px 4px rgba(0, 0, 0, 0.6);
 }

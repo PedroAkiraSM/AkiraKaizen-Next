@@ -3,6 +3,7 @@ import { Sora, DM_Sans, Noto_Serif_JP } from "next/font/google";
 import "./globals.css";
 import SmoothScroll from "@/components/SmoothScroll";
 import Loader from "@/components/Loader";
+import CursorGlow from "@/components/CursorGlow";
 
 const sora = Sora({
   variable: "--font-sora",
@@ -70,8 +71,7 @@ export default function RootLayout({
         <div className="scroll-progress" id="scroll-progress" aria-hidden="true" />
 
         {/* Custom Cursor */}
-        <div className="cursor cursor-dot" id="cursor-dot" aria-hidden="true" />
-        <div className="cursor cursor-ring" id="cursor-ring" aria-hidden="true" />
+        <CursorGlow />
 
         {/* Page Content */}
         <SmoothScroll>

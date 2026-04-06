@@ -48,9 +48,9 @@ const PARTS: PartDef[] = [
   { id: 'capacete', src: '/assets/hero/parts/Capacete.svg', left: 30.14, top: 27, width: 40.21, zIndex: 29, hidden: true },
 
   // Samurai eyes (hidden)
-  { id: 'samuraiAberto', src: '/assets/hero/parts/SamuraiAberto.svg', left: 44.4, top: 54.9, width: 11.68, zIndex: 41, hidden: true },
-  { id: 'samuraiSerrado', src: '/assets/hero/parts/SamuraiSerrado.svg', left: 44.4, top: 55.8, width: 11.68, zIndex: 41, hidden: true },
-  { id: 'samuraiFechado', src: '/assets/hero/parts/SamuraiFechado.svg', left: 44.4, top: 56.3, width: 11.68, zIndex: 41, hidden: true },
+  { id: 'samuraiAberto', src: '/assets/hero/parts/SamuraiAberto.svg', left: 44.4, top: 56.3, width: 11.68, zIndex: 41, hidden: true },
+  { id: 'samuraiSerrado', src: '/assets/hero/parts/SamuraiSerrado.svg', left: 44.4, top: 57.8, width: 11.68, zIndex: 41, hidden: true },
+  { id: 'samuraiFechado', src: '/assets/hero/parts/SamuraiFechado.svg', left: 44.4, top: 58.3, width: 11.68, zIndex: 41, hidden: true },
 ];
 
 const STAGE_LABELS = ['I', 'II', 'III', 'IV'] as const;
@@ -59,7 +59,7 @@ const STAGE_LABELS = ['I', 'II', 'III', 'IV'] as const;
 
 export default function Hero() {
   const wrapperRef = useRef<HTMLDivElement>(null);
-  const bgTextRef = useRef<HTMLSpanElement>(null);
+  const bgTextRef = useRef<HTMLDivElement>(null);
   const ctaRef = useRef<HTMLDivElement>(null);
   const scrollIndicatorRef = useRef<HTMLDivElement>(null);
 
@@ -163,14 +163,12 @@ export default function Hero() {
     /* 5. Mask appears from below (40-58%) */
     ft(p.mascara, { yPercent: 20, opacity: 0 }, { yPercent: 0, opacity: 1, duration: 0.18, ease: 'power2.out' }, 0.40);
 
-    // Hide sobrancelhas behind mask (oculos stay visible, covered by helmet via z-index)
-    tw(p.sobrancelhas, { opacity: 0, duration: 0.12, ease: 'power1.in' }, 0.42);
-    // Normal eyes fade out
-    tw(p.olhosAbertos, { opacity: 0, duration: 0.12, ease: 'power1.in' }, 0.43);
-
-    /* 6. Helmet descends, hair fades out (60-82%) */
+    /* 6. Helmet descends, hair fades out, eyes/sobrancelhas/oculos hide WITH helmet (60-82%) */
     tw(p.cabelo, { opacity: 0, duration: 0.15, ease: 'power1.in' }, 0.60);
     ft(p.capacete, { yPercent: -40, opacity: 0 }, { yPercent: 0, opacity: 1, duration: 0.22, ease: 'power2.out' }, 0.60);
+    tw(p.sobrancelhas, { opacity: 0, duration: 0.10, ease: 'power1.in' }, 0.62);
+    tw(p.olhosAbertos, { opacity: 0, duration: 0.10, ease: 'power1.in' }, 0.63);
+    tw(p.oculos, { opacity: 0, duration: 0.10, ease: 'power1.in' }, 0.63);
 
     /* 7. Samurai eyes appear (70-78%) */
     tw(p.samuraiAberto, { opacity: 1, duration: 0.08, ease: 'power1.inOut' }, 0.70);
@@ -255,17 +253,7 @@ export default function Hero() {
   return (
     <div ref={wrapperRef} className={styles.heroWrapper} id="hero">
       <section className={styles.hero} aria-label="Hero">
-        {/* ── Decorative lines ────────────────────────────────────── */}
-        <div className={styles.lineHorizontalTop} aria-hidden="true" />
-        <div className={styles.lineHorizontalBottom} aria-hidden="true" />
-        <div className={styles.lineVerticalLeft} aria-hidden="true" />
-        <div className={styles.lineVerticalRight} aria-hidden="true" />
-
-        {/* ── Corner marks ────────────────────────────────────────── */}
-        <div className={`${styles.cornerMark} ${styles.cornerTL}`} aria-hidden="true" />
-        <div className={`${styles.cornerMark} ${styles.cornerTR}`} aria-hidden="true" />
-        <div className={`${styles.cornerMark} ${styles.cornerBL}`} aria-hidden="true" />
-        <div className={`${styles.cornerMark} ${styles.cornerBR}`} aria-hidden="true" />
+        {/* ── Decorative frame (single border via CSS ::after) ──── */}
 
         {/* ── Side text left ──────────────────────────────────────── */}
         <div className={styles.sideTextLeft} aria-hidden="true">
@@ -281,9 +269,10 @@ export default function Hero() {
 
         {/* ── Background text ─────────────────────────────────────── */}
         <div className={styles.bgText} aria-hidden="true">
-          <span ref={bgTextRef} className={styles.bgTextInner}>
-            AKIRA KAIZEN
-          </span>
+          <div ref={bgTextRef} className={styles.bgTextInner}>
+            <span>AKIRA</span>
+            <span>KAIZEN</span>
+          </div>
         </div>
 
         {/* ── Character assembly ──────────────────────────────────── */}

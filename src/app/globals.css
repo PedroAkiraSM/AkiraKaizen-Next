@@ -45,7 +45,6 @@
   html {
     scroll-behavior: smooth;
     -webkit-text-size-adjust: 100%;
-    cursor: none;
   }
 
   body {
@@ -56,13 +55,11 @@
     overflow-x: hidden;
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
-    cursor: none;
   }
 
   a {
     color: inherit;
     text-decoration: none;
-    cursor: none;
   }
 
   img,
@@ -81,11 +78,6 @@
     background: none;
     border: none;
     outline: none;
-    cursor: none;
-  }
-
-  button {
-    cursor: none;
   }
 
   ul,
@@ -133,47 +125,32 @@
 
 /* ── Custom Cursor ────────────────────────────────────────────────── */
 
-.cursor {
+.cursor-glow {
   position: fixed;
+  top: 0;
+  left: 0;
+  width: 24px;
+  height: 24px;
+  border-radius: 50%;
+  background: radial-gradient(circle, rgba(252, 25, 59, 0.5) 0%, transparent 70%);
   pointer-events: none;
   z-index: 99999;
-  mix-blend-mode: difference;
-}
-
-.cursor-dot {
-  width: 6px;
-  height: 6px;
-  background: var(--accent);
-  border-radius: 50%;
+  opacity: 0.5;
+  mix-blend-mode: screen;
+  filter: blur(3px);
   transform: translate(-50%, -50%);
+  transition: width 0.3s ease, height 0.3s ease, opacity 0.3s ease;
 }
 
-.cursor-ring {
-  width: 36px;
-  height: 36px;
-  border: 1px solid var(--accent);
-  border-radius: 50%;
-  transform: translate(-50%, -50%);
-  transition: width 0.3s ease, height 0.3s ease, border-color 0.3s ease;
-}
-
-.cursor-ring.hover {
-  width: 56px;
-  height: 56px;
-  border-color: var(--gold);
+.cursor-glow.hover {
+  width: 48px;
+  height: 48px;
+  opacity: 0.7;
 }
 
 @media (pointer: coarse) {
-  .cursor-dot,
-  .cursor-ring {
+  .cursor-glow {
     display: none;
-  }
-
-  html,
-  body,
-  a,
-  button {
-    cursor: auto;
   }
 }
 
