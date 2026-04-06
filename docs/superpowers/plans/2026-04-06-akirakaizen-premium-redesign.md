@@ -572,7 +572,7 @@ Key layout structure:
 [Horizontal scroll row:]
   [02 Judo360] [03 GeoplasticoBR] [04 FinanC] [05 Sousa Design] [06 Biblioteca] [07 Portal SEG]
 
-[Stats: 15K+ lines | 12+ technologies | 99.97% uptime | 7+ projects]
+[Stats: 7 projetos em produção | 99.9% uptime | < 24h resposta | Suporte contínuo]
 ```
 
 - [ ] **Step 2: Rewrite Projects.module.css with premium styles**
@@ -685,7 +685,119 @@ git commit -m "feat: redesign about section with philosophy-first approach"
 
 ---
 
-## Phase 6: Contact & Footer
+## Phase 6: New Conversion Sections
+
+### Task 10: Testimonials / Social Proof Section
+
+**Files:**
+- Create: `src/components/Testimonials.tsx`
+- Create: `src/components/Testimonials.module.css`
+
+Section positioned AFTER Projects to provide social proof right after the visitor sees the work. Uses a clean, minimal design with large quotes.
+
+Layout structure:
+```
+[Label: DEPOIMENTOS]
+[Heading: "O que dizem sobre nosso trabalho."]
+
+[3 testimonial cards — horizontal row:]
+  "Quote text..."        "Quote text..."        "Quote text..."
+  — Nome, Cargo          — Nome, Cargo          — Nome, Cargo
+    Empresa                Empresa                Empresa
+
+[Optional: Client logos marquee below]
+```
+
+Design:
+- Large opening quote mark (「) in PP Nikkei Pacific, red accent
+- Quote text in DM Sans italic
+- Client name/title below in smaller uppercase
+- Cards have subtle border (1px var(--border)) with hover glow
+- ScrollReveal entrance animation
+
+Stats within this section (honest, value-focused):
+- "7 projetos em produção" (prova que funciona)
+- "99.9% uptime" (confiabilidade)
+- "< 24h tempo de resposta" (agilidade)
+- "Suporte contínuo" (não abandona)
+
+- [ ] **Step 1: Create Testimonials.tsx**
+- [ ] **Step 2: Create Testimonials.module.css**
+- [ ] **Step 3: Verify build and commit**
+
+```bash
+git add src/components/Testimonials.tsx src/components/Testimonials.module.css
+git commit -m "feat: add testimonials section with social proof and honest metrics"
+```
+
+---
+
+### Task 11: Trust & Guarantees Section
+
+**Files:**
+- Create: `src/components/Trust.tsx`
+- Create: `src/components/Trust.module.css`
+
+Positioned BEFORE Contact to remove objections right before the final CTA. Shows what the client can expect in terms of security, process, and guarantees.
+
+Layout structure:
+```
+[Label: COMPROMISSO]
+[Heading: "Transparência em cada etapa."]
+
+[4 guarantee items — 2x2 grid:]
+  盾 Código Protegido              契 Contrato Claro
+  NDA + LGPD compliant.            Escopo, prazos e valores
+  Seu código é seu.                definidos antes de começar.
+
+  守 Suporte Pós-Entrega           改 Revisões Incluídas
+  Não abandonamos projetos.        Ajustes até sua aprovação
+  Manutenção e evolução.           final. Sem surpresas.
+
+[CTA: "Agendar uma conversa" — MagneticButton]
+```
+
+Design:
+- Kanji as decorative element for each guarantee (large, muted)
+- Clean white text on dark background
+- Subtle border cards matching the Japanese modern aesthetic
+- ScrollReveal stagger animation
+
+- [ ] **Step 1: Create Trust.tsx**
+- [ ] **Step 2: Create Trust.module.css**
+- [ ] **Step 3: Verify build and commit**
+
+```bash
+git add src/components/Trust.tsx src/components/Trust.module.css
+git commit -m "feat: add trust/guarantees section with kanji decorations"
+```
+
+---
+
+### Task 12: Intermediate CTA Component
+
+**Files:**
+- Create: `src/components/CtaBanner.tsx`
+
+A reusable CTA banner placed after Method section to capture visitors who are already convinced. Full-width, bold statement + MagneticButton.
+
+```
+[Full-width red background]
+  "Pronto para transformar sua ideia em realidade?"
+  [COMEÇAR MEU PROJETO] — MagneticButton
+```
+
+- [ ] **Step 1: Create CtaBanner.tsx**
+- [ ] **Step 2: Verify build and commit**
+
+```bash
+git add src/components/CtaBanner.tsx
+git commit -m "feat: add intermediate CTA banner component"
+```
+
+---
+
+## Phase 7: Contact & Footer
 
 ### Task 10: Premium Contact Section
 
@@ -774,17 +886,25 @@ export default function Home() {
       <Hero />
       <SectionDivider kanji="改" />
       <Projects />
+      <Testimonials />
       <SectionDivider kanji="善" />
       <Method />
+      <CtaBanner />
       <SectionDivider kanji="道" />
       <Founder />
       <TechMarquee />
+      <Trust />
       <Contact />
       <Footer />
     </>
   );
 }
 ```
+
+New flow rationale:
+- Projects → Testimonials (social proof right after seeing the work)
+- Method → CtaBanner (capture convinced visitors mid-page)
+- Founder → TechMarquee → Trust → Contact (build confidence → remove objections → CTA)
 
 - [ ] **Step 1: Update page.tsx**
 - [ ] **Step 2: Final build verification**
