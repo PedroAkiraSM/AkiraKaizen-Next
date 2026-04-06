@@ -25,6 +25,9 @@ const notoSerifJP = Noto_Serif_JP({
 });
 
 export const metadata: Metadata = {
+  icons: {
+    icon: "/assets/logo-icon.svg",
+  },
   title: "AkiraKaizen | Design & Development Studio",
   description:
     "Studio de design e desenvolvimento web focado em soluções digitais elegantes e funcionais. Transformamos ideias em experiências digitais memoráveis.",
