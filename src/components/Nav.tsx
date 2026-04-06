@@ -1,7 +1,6 @@
 'use client';
 
 import { useState, useEffect, useCallback } from 'react';
-import Image from 'next/image';
 import styles from './Nav.module.css';
 
 const NAV_LINKS = [
@@ -15,7 +14,6 @@ type Lang = 'pt' | 'en';
 
 export default function Nav() {
   const [visible, setVisible] = useState(true);
-  const [scrolled, setScrolled] = useState(false);
   const [menuOpen, setMenuOpen] = useState(false);
   const [lang, setLang] = useState<Lang>('pt');
 
@@ -23,7 +21,6 @@ export default function Nav() {
     let lastScroll = 0;
     const handleScroll = () => {
       const current = window.scrollY;
-      setScrolled(current > 40);
 
       // Only start hiding after scrolling past the entire hero section (300vh)
       const heroEl = document.getElementById('hero');
@@ -80,28 +77,13 @@ export default function Nav() {
       <nav
         className="fixed top-0 left-0 w-full z-50"
         style={{
-          background: scrolled
-            ? 'rgba(180, 15, 40, 0.95)'
-            : 'rgba(180, 15, 40, 0.85)',
-          backdropFilter: scrolled ? 'blur(12px)' : 'none',
-          WebkitBackdropFilter: scrolled ? 'blur(12px)' : 'none',
-          padding: '0 28px',
+          background: 'var(--accent, #fc193b)',
+          padding: '0 40px',
           transform: `translateY(${visible ? '0' : '-100%'})`,
-          transition: 'transform 0.3s ease, background 0.5s ease, backdrop-filter 0.5s ease',
+          transition: 'transform 0.3s ease',
         }}
       >
-        <div className="mx-auto flex items-center justify-between h-[88px] max-w-[1400px] relative">
-          {/* Logo */}
-          <a href="#hero" onClick={(e) => handleNavClick(e, '#hero')} className="flex-shrink-0">
-            <Image
-              src="/assets/logo-icon.svg"
-              alt="AkiraKaizen"
-              width={40}
-              height={40}
-              priority
-            />
-          </a>
-
+        <div className="mx-auto flex items-center justify-center h-[60px] max-w-[1400px] relative">
           {/* Desktop links */}
           <ul className="hidden md:flex items-center justify-center gap-14">
             {NAV_LINKS.map((link) => (
@@ -127,9 +109,6 @@ export default function Nav() {
               </button>
             </li>
           </ul>
-
-          {/* Spacer to balance logo on desktop */}
-          <div className="hidden md:block w-[40px]" />
 
           {/* Hamburger button (mobile) */}
           <button
