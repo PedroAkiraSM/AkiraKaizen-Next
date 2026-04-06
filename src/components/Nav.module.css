@@ -2,8 +2,8 @@
   color: #ffffff;
   font-weight: 600;
   text-transform: uppercase;
-  letter-spacing: 0.15em;
-  font-size: clamp(0.85rem, 1.2vw, 1.05rem);
+  letter-spacing: 0.25em;
+  font-size: clamp(0.95rem, 1.4vw, 1.2rem);
   text-decoration: none;
   position: relative;
   transition: opacity 0.3s ease;

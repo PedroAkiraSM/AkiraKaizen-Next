@@ -1,6 +1,7 @@
 'use client';
 
 import { useState, useEffect, useCallback } from 'react';
+import Image from 'next/image';
 import styles from './Nav.module.css';
 
 const NAV_LINKS = [
@@ -81,7 +82,7 @@ export default function Nav() {
         style={{
           background: scrolled
             ? 'rgba(180, 15, 40, 0.95)'
-            : 'transparent',
+            : 'rgba(180, 15, 40, 0.85)',
           backdropFilter: scrolled ? 'blur(12px)' : 'none',
           WebkitBackdropFilter: scrolled ? 'blur(12px)' : 'none',
           padding: '0 28px',
@@ -89,9 +90,20 @@ export default function Nav() {
           transition: 'transform 0.3s ease, background 0.5s ease, backdrop-filter 0.5s ease',
         }}
       >
-        <div className="mx-auto flex items-center justify-center h-[72px] max-w-[1400px] relative">
+        <div className="mx-auto flex items-center justify-between h-[88px] max-w-[1400px] relative">
+          {/* Logo */}
+          <a href="#hero" onClick={(e) => handleNavClick(e, '#hero')} className="flex-shrink-0">
+            <Image
+              src="/assets/logo-icon.svg"
+              alt="AkiraKaizen"
+              width={40}
+              height={40}
+              priority
+            />
+          </a>
+
           {/* Desktop links */}
-          <ul className="hidden md:flex items-center justify-center gap-12">
+          <ul className="hidden md:flex items-center justify-center gap-14">
             {NAV_LINKS.map((link) => (
               <li key={link.href}>
                 <a
@@ -115,6 +127,9 @@ export default function Nav() {
               </button>
             </li>
           </ul>
+
+          {/* Spacer to balance logo on desktop */}
+          <div className="hidden md:block w-[40px]" />
 
           {/* Hamburger button (mobile) */}
           <button
