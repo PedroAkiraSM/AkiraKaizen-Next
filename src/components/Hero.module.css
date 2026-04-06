@@ -371,6 +371,8 @@
   }
 
   .characterContainer {
-    width: clamp(320px, 90vw, 600px);
+    width: clamp(500px, 130vw, 900px);
+    aspect-ratio: auto;
+    height: 65vh;
   }
 }
