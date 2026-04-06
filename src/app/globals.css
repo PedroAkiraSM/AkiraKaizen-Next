@@ -46,7 +46,6 @@
     scroll-behavior: smooth;
     -webkit-text-size-adjust: 100%;
     cursor: none;
-    overflow-x: hidden;
   }
 
   body {
