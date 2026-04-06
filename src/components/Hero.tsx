@@ -253,6 +253,9 @@ export default function Hero() {
   return (
     <div ref={wrapperRef} className={styles.heroWrapper} id="hero">
       <section className={styles.hero} aria-label="Hero">
+        {/* ── Animated grain noise ───────────────────────────────── */}
+        <div className={styles.heroGrain} aria-hidden="true" />
+
         {/* ── Decorative frame (single border via CSS ::after) ──── */}
 
         {/* ── Side text left ──────────────────────────────────────── */}

@@ -80,8 +80,8 @@ export default function Nav() {
         className="fixed top-0 left-0 w-full z-50"
         style={{
           background: scrolled
-            ? 'rgba(10, 10, 10, 0.9)'
-            : 'linear-gradient(180deg, rgba(0,0,0,0.45) 0%, transparent 100%)',
+            ? 'rgba(180, 15, 40, 0.95)'
+            : 'transparent',
           backdropFilter: scrolled ? 'blur(12px)' : 'none',
           WebkitBackdropFilter: scrolled ? 'blur(12px)' : 'none',
           padding: '0 28px',

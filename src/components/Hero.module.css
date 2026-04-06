@@ -18,13 +18,58 @@
   justify-content: center;
 }
 
-/* ── Decorative Frame (single border, replaces 8 divs) ──────────── */
+/* ── Animated Grain Noise ───────────────────────────────────────── */
 
+.heroGrain {
+  position: absolute;
+  inset: -50%;
+  width: 200%;
+  height: 200%;
+  z-index: 48;
+  pointer-events: none;
+  opacity: 0.12;
+  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.8' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+  background-size: 256px 256px;
+  animation: grainShift 0.8s steps(8) infinite;
+}
+
+@keyframes grainShift {
+  0%, 100% { transform: translate(0, 0); }
+  12.5% { transform: translate(-10%, -15%); }
+  25% { transform: translate(15%, -5%); }
+  37.5% { transform: translate(-5%, 15%); }
+  50% { transform: translate(10%, 10%); }
+  62.5% { transform: translate(-15%, 5%); }
+  75% { transform: translate(5%, -10%); }
+  87.5% { transform: translate(-10%, 10%); }
+}
+
+/* ── Decorative Frame (crossing lines, full width/height) ────────── */
+
+/* Horizontal lines - full width */
+.hero::before {
+  content: "";
+  position: absolute;
+  left: 0;
+  right: 0;
+  top: 60px;
+  height: calc(100% - 120px);
+  border-top: 3px solid rgba(255, 255, 255, 0.2);
+  border-bottom: 3px solid rgba(255, 255, 255, 0.2);
+  z-index: 50;
+  pointer-events: none;
+}
+
+/* Vertical lines - full height */
 .hero::after {
   content: "";
   position: absolute;
-  inset: 40px;
-  border: 3px solid rgba(255, 255, 255, 0.25);
+  top: 0;
+  bottom: 0;
+  left: 40px;
+  width: calc(100% - 80px);
+  border-left: 3px solid rgba(255, 255, 255, 0.2);
+  border-right: 3px solid rgba(255, 255, 255, 0.2);
   z-index: 50;
   pointer-events: none;
 }
@@ -298,8 +343,15 @@
     display: none;
   }
 
+  .hero::before {
+    top: 40px;
+    height: calc(100% - 80px);
+    border-width: 2px;
+  }
+
   .hero::after {
-    inset: 20px;
+    left: 20px;
+    width: calc(100% - 40px);
     border-width: 2px;
   }
 
