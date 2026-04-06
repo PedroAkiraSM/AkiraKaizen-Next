@@ -3,6 +3,7 @@
 import { useEffect, useRef, useCallback } from 'react';
 import gsap from 'gsap';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
+import SplitType from 'split-type';
 import styles from './Hero.module.css';
 
 /* ── Part Definitions ──────────────────────────────────────────── */
@@ -91,6 +92,25 @@ export default function Hero() {
     const bgText = bgTextRef.current;
     const cta = ctaRef.current;
     const scrollInd = scrollIndicatorRef.current;
+
+    /* ── Initial text reveal animation ─────────────────────────── */
+    if (bgText) {
+      const split = new SplitType(bgText as HTMLElement, { types: 'chars' });
+      if (split.chars) {
+        gsap.fromTo(
+          split.chars,
+          { opacity: 0, y: 60 },
+          {
+            opacity: 1,
+            y: 0,
+            duration: 1,
+            stagger: 0.03,
+            ease: 'power3.out',
+            delay: 1.5,
+          },
+        );
+      }
+    }
 
     /* ───────────────────────────────────────────────────────────────
      * Master scrub timeline  (progress 0 → 1 maps to 300vh scroll)
