@@ -9,6 +9,7 @@ interface MagneticButtonProps {
   href?: string;
   onClick?: () => void;
   strength?: number;
+  style?: React.CSSProperties;
 }
 
 export default function MagneticButton({
@@ -17,6 +18,7 @@ export default function MagneticButton({
   href,
   onClick,
   strength = 0.3,
+  style,
 }: MagneticButtonProps) {
   const ref = useRef<HTMLDivElement>(null);
   const [position, setPosition] = useState({ x: 0, y: 0 });
@@ -50,7 +52,7 @@ export default function MagneticButton({
       transition={{ type: 'spring', stiffness: 200, damping: 15, mass: 0.5 }}
       className="inline-block"
     >
-      <Tag className={className} onClick={onClick} {...linkProps}>
+      <Tag className={className} onClick={onClick} style={style} {...linkProps}>
         {children}
       </Tag>
     </motion.div>
