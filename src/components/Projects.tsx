@@ -4,6 +4,7 @@ import { useEffect, useRef } from 'react';
 import Image from 'next/image';
 import gsap from 'gsap';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
+import SplitTextReveal from './SplitTextReveal';
 import styles from './Projects.module.css';
 
 gsap.registerPlugin(ScrollTrigger);
@@ -12,10 +13,9 @@ gsap.registerPlugin(ScrollTrigger);
 
 interface Project {
   name: string;
-  url: string;
+  url?: string;
   description: string;
   tags: string[];
-  impact: string;
   image: string;
   featured?: boolean;
 }
@@ -24,9 +24,8 @@ const PROJECTS: Project[] = [
   {
     name: 'ShalomDesk',
     url: 'https://shalomdesk.com.br',
-    description: 'Plataforma SaaS para gestão de food service',
+    description: 'Plataforma SaaS para gestao de food service',
     tags: ['Laravel', 'SaaS', 'Multi-tenant'],
-    impact: '5 estabelecimentos ativos',
     image: '/assets/preview-shalomdesk.jpg',
     featured: true,
   },
@@ -35,7 +34,6 @@ const PROJECTS: Project[] = [
     url: 'https://judo360.com.br',
     description: 'Plataforma educacional completa sobre judo',
     tags: ['PHP', 'MySQL', 'Bootstrap'],
-    impact: '100+ tecnicas catalogadas',
     image: '/assets/preview-judo360.jpg',
   },
   {
@@ -43,15 +41,12 @@ const PROJECTS: Project[] = [
     url: 'https://geoplasticobr.com',
     description: 'Mapa interativo de microplasticos',
     tags: ['PHP', 'Leaflet.js', 'MySQL'],
-    impact: '350+ pontos mapeados',
     image: '/assets/preview-geoplasticobr.jpg',
   },
   {
     name: 'FinanC',
-    url: 'https://khaki-newt-183642.hostingersite.com',
     description: 'PWA de gestao financeira pessoal',
     tags: ['PWA', 'JavaScript', 'OFX/CSV'],
-    impact: 'Gestao inteligente de financas',
     image: '/assets/preview-financ.jpg',
   },
   {
@@ -59,7 +54,6 @@ const PROJECTS: Project[] = [
     url: 'https://wbdesignn.com.br',
     description: 'Portfolio para agencia criativa',
     tags: ['HTML/CSS', 'JavaScript', 'Branding'],
-    impact: 'Identidade visual completa',
     image: '/assets/preview-sousadesign.jpg',
   },
   {
@@ -67,31 +61,37 @@ const PROJECTS: Project[] = [
     url: 'https://bibliotecaccsa.com.br',
     description: 'Gestao bibliografica juridica',
     tags: ['Alpine.js', 'Tailwind', 'PHP'],
-    impact: '2.000+ obras catalogadas',
     image: '/assets/preview-bibliotecaccsa.jpg',
   },
   {
     name: 'Portal SEG',
-    url: 'https://springgreen-stingray-259383.hostingersite.com',
     description: 'Site de seguranca eletronica',
     tags: ['HTML/CSS', 'JavaScript', 'AOS'],
-    impact: '10+ anos de mercado',
     image: '/assets/preview-portalseg.jpg',
   },
 ];
 
-interface Stat {
+interface AnimatedStat {
+  kind: 'animated';
   value: number;
   suffix: string;
   label: string;
   decimals?: number;
 }
 
+interface StaticStat {
+  kind: 'static';
+  display: string;
+  label: string;
+}
+
+type Stat = AnimatedStat | StaticStat;
+
 const STATS: Stat[] = [
-  { value: 15, suffix: 'K+', label: 'Linhas de codigo' },
-  { value: 12, suffix: '+', label: 'Tecnologias' },
-  { value: 99.97, suffix: '%', label: 'Uptime', decimals: 2 },
-  { value: 7, suffix: '+', label: 'Projetos em producao' },
+  { kind: 'animated', value: 7, suffix: '', label: 'Projetos em producao' },
+  { kind: 'animated', value: 99.9, suffix: '%', label: 'Uptime garantido', decimals: 1 },
+  { kind: 'static', display: '< 24h', label: 'Tempo de resposta' },
+  { kind: 'static', display: '\u221E', label: 'Suporte continuo' },
 ];
 
 /* -- Arrow Icon ----------------------------------------------------- */
@@ -120,14 +120,14 @@ function ArrowIcon() {
 
 export default function Projects() {
   const sectionRef = useRef<HTMLElement>(null);
-  const cardsRef = useRef<(HTMLAnchorElement | null)[]>([]);
+  const cardsRef = useRef<(HTMLAnchorElement | HTMLDivElement | null)[]>([]);
   const statsRef = useRef<HTMLDivElement>(null);
   const statValuesRef = useRef<(HTMLSpanElement | null)[]>([]);
 
   useEffect(() => {
     const ctx = gsap.context(() => {
       /* -- Card stagger animation ----------------------------------- */
-      const cards = cardsRef.current.filter(Boolean) as HTMLAnchorElement[];
+      const cards = cardsRef.current.filter(Boolean) as HTMLElement[];
 
       cards.forEach((card, i) => {
         gsap.fromTo(
@@ -163,16 +163,19 @@ export default function Projects() {
               const el = statEls[i];
               if (!el) return;
 
-              const obj = { val: 0 };
-              gsap.to(obj, {
-                val: stat.value,
-                duration: 2,
-                ease: 'power2.out',
-                onUpdate: () => {
-                  const decimals = stat.decimals ?? 0;
-                  el.textContent = obj.val.toFixed(decimals) + stat.suffix;
-                },
-              });
+              if (stat.kind === 'animated') {
+                const obj = { val: 0 };
+                gsap.to(obj, {
+                  val: stat.value,
+                  duration: 2,
+                  ease: 'power2.out',
+                  onUpdate: () => {
+                    const decimals = stat.decimals ?? 0;
+                    el.textContent = obj.val.toFixed(decimals) + stat.suffix;
+                  },
+                });
+              }
+              /* static stats are already rendered with their display value */
             });
           },
         });
@@ -185,23 +188,68 @@ export default function Projects() {
   const featured = PROJECTS.find((p) => p.featured)!;
   const regular = PROJECTS.filter((p) => !p.featured);
 
+  /* -- Helper to format number with leading zero -------------------- */
+  const padNumber = (n: number) => String(n).padStart(2, '0');
+
+  /* -- Wrap card in link or div depending on url --------------------- */
+  const CardWrapper = ({
+    project,
+    children,
+    className,
+    refCallback,
+    style,
+  }: {
+    project: Project;
+    children: React.ReactNode;
+    className: string;
+    refCallback: (el: HTMLAnchorElement | HTMLDivElement | null) => void;
+    style?: React.CSSProperties;
+  }) => {
+    if (project.url) {
+      return (
+        <a
+          href={project.url}
+          target="_blank"
+          rel="noopener noreferrer"
+          className={className}
+          ref={refCallback as (el: HTMLAnchorElement | null) => void}
+          style={style}
+        >
+          {children}
+        </a>
+      );
+    }
+    return (
+      <div
+        className={className}
+        ref={refCallback as (el: HTMLDivElement | null) => void}
+        style={style}
+      >
+        {children}
+      </div>
+    );
+  };
+
   return (
     <section id="projetos" ref={sectionRef} className={styles.section}>
       <div className="max-w-[1200px] mx-auto">
         {/* -- Header ------------------------------------------------ */}
         <p className={styles.label}>PROJETOS</p>
-        <h2 className={styles.title}>
-          7 projetos<span className={styles.titleDot}>.</span> Todos em
-          produ&ccedil;&atilde;o<span className={styles.titleDot}>.</span>
-        </h2>
+        <SplitTextReveal
+          as="h2"
+          className={styles.title}
+          splitBy="words"
+          stagger={0.06}
+          duration={0.9}
+        >
+          Todos em producao.
+        </SplitTextReveal>
 
         {/* -- Featured Card ----------------------------------------- */}
-        <a
-          href={featured.url}
-          target="_blank"
-          rel="noopener noreferrer"
+        <CardWrapper
+          project={featured}
           className={styles.featuredCard}
-          ref={(el) => {
+          refCallback={(el) => {
             cardsRef.current[0] = el;
           }}
           style={{ opacity: 0 }}
@@ -211,19 +259,19 @@ export default function Projects() {
               src={featured.image}
               alt={`Preview do projeto ${featured.name}`}
               fill
-              sizes="(max-width: 768px) 100vw, 55vw"
+              sizes="(max-width: 768px) 100vw, 60vw"
               style={{ objectFit: 'cover' }}
               priority
             />
           </div>
           <div className={styles.featuredInfo}>
-            <span className={styles.featuredBadge}>
-              <span className={styles.featuredBadgeDot} />
-              FEATURED
+            <span className={styles.featuredNumber}>01</span>
+            <span className={styles.liveBadge}>
+              <span className={styles.liveDot} />
+              LIVE
             </span>
             <h3 className={styles.featuredName}>{featured.name}</h3>
             <p className={styles.featuredDesc}>{featured.description}</p>
-            <p className={styles.featuredImpact}>{featured.impact}</p>
             <div className={styles.featuredTags}>
               {featured.tags.map((tag) => (
                 <span key={tag} className={styles.tag}>
@@ -231,22 +279,22 @@ export default function Projects() {
                 </span>
               ))}
             </div>
-            <span className={styles.featuredLink}>
-              Ver projeto <ArrowIcon />
-            </span>
+            {featured.url && (
+              <span className={styles.featuredLink}>
+                Ver projeto <ArrowIcon />
+              </span>
+            )}
           </div>
-        </a>
+        </CardWrapper>
 
         {/* -- Regular Cards Grid ------------------------------------ */}
         <div className={styles.grid}>
           {regular.map((project, i) => (
-            <a
+            <CardWrapper
               key={project.name}
-              href={project.url}
-              target="_blank"
-              rel="noopener noreferrer"
+              project={project}
               className={styles.card}
-              ref={(el) => {
+              refCallback={(el) => {
                 cardsRef.current[i + 1] = el;
               }}
               style={{ opacity: 0 }}
@@ -259,15 +307,17 @@ export default function Projects() {
                   sizes="(max-width: 768px) 100vw, (max-width: 1024px) 50vw, 33vw"
                   style={{ objectFit: 'cover' }}
                 />
-                <span className={styles.liveBadge}>
-                  <span className={styles.liveDot} />
-                  LIVE
-                </span>
+                <span className={styles.cardNumber}>{padNumber(i + 2)}</span>
+                {project.url && (
+                  <span className={styles.liveBadge}>
+                    <span className={styles.liveDot} />
+                    LIVE
+                  </span>
+                )}
               </div>
               <div className={styles.cardBody}>
                 <h3 className={styles.cardName}>{project.name}</h3>
                 <p className={styles.cardDesc}>{project.description}</p>
-                <p className={styles.cardImpact}>{project.impact}</p>
                 <div className={styles.cardTags}>
                   {project.tags.map((tag) => (
                     <span key={tag} className={styles.tag}>
@@ -276,7 +326,7 @@ export default function Projects() {
                   ))}
                 </div>
               </div>
-            </a>
+            </CardWrapper>
           ))}
         </div>
 
@@ -290,7 +340,7 @@ export default function Projects() {
                   statValuesRef.current[i] = el;
                 }}
               >
-                0{stat.suffix}
+                {stat.kind === 'static' ? stat.display : `0${stat.suffix}`}
               </span>
               <p className={styles.statLabel}>{stat.label}</p>
             </div>

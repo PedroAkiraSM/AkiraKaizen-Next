@@ -1,4 +1,4 @@
-/* ── Projects Section ─────────────────────────────────────────────── */
+/* -- Projects Section ----------------------------------------------- */
 
 .section {
   background: var(--bg);
@@ -6,7 +6,7 @@
   position: relative;
 }
 
-/* ── Section Header ──────────────────────────────────────────────── */
+/* -- Section Header ------------------------------------------------- */
 
 .label {
   font-family: var(--font-display);
@@ -20,18 +20,14 @@
 
 .title {
   font-family: var(--font-display);
-  font-size: clamp(2rem, 4vw, 3.2rem);
+  font-size: clamp(2.4rem, 5vw, 4rem);
   font-weight: 800;
   color: var(--text);
-  line-height: 1.15;
+  line-height: 1.1;
   margin-bottom: 4rem;
 }
 
-.titleDot {
-  color: var(--accent);
-}
-
-/* ── Featured Card ───────────────────────────────────────────────── */
+/* -- Featured Card -------------------------------------------------- */
 
 .featuredCard {
   display: flex;
@@ -40,31 +36,39 @@
   border: 1px solid var(--border);
   border-radius: 12px;
   overflow: hidden;
-  margin-bottom: 2rem;
+  margin-bottom: 2.5rem;
+  text-decoration: none;
+  color: inherit;
+  position: relative;
   transition: transform 0.4s cubic-bezier(0.22, 1, 0.36, 1),
+    border-color 0.4s cubic-bezier(0.22, 1, 0.36, 1),
     box-shadow 0.4s cubic-bezier(0.22, 1, 0.36, 1);
 }
 
 .featuredCard:hover {
-  transform: translateY(-4px);
-  box-shadow: 0 20px 60px rgba(252, 25, 59, 0.08),
+  transform: translateY(-6px);
+  border-color: var(--accent);
+  box-shadow: 0 24px 64px rgba(252, 25, 59, 0.08),
     0 8px 24px rgba(0, 0, 0, 0.4);
 }
 
 .featuredImageWrap {
   position: relative;
-  width: 55%;
-  min-height: 340px;
+  width: 60%;
+  min-height: 380px;
   flex-shrink: 0;
   overflow: hidden;
 }
 
 .featuredImageWrap img {
-  transition: transform 0.6s cubic-bezier(0.22, 1, 0.36, 1);
+  filter: grayscale(30%);
+  transition: transform 0.6s cubic-bezier(0.22, 1, 0.36, 1),
+    filter 0.6s cubic-bezier(0.22, 1, 0.36, 1);
 }
 
 .featuredCard:hover .featuredImageWrap img {
   transform: scale(1.03);
+  filter: grayscale(0%);
 }
 
 .featuredInfo {
@@ -73,41 +77,25 @@
   justify-content: center;
   padding: 2.5rem 3rem;
   flex: 1;
-  gap: 1rem;
+  gap: 0.75rem;
+  position: relative;
+  overflow: hidden;
 }
 
-.featuredBadge {
-  display: inline-flex;
-  align-items: center;
-  gap: 0.4rem;
+/* -- Featured Number Watermark -------------------------------------- */
+
+.featuredNumber {
+  position: absolute;
+  top: -0.15em;
+  right: -0.05em;
   font-family: var(--font-display);
-  font-size: 0.65rem;
-  font-weight: 700;
-  letter-spacing: 0.15em;
-  text-transform: uppercase;
-  color: var(--accent);
-  border: 1px solid var(--accent);
-  border-radius: 100px;
-  padding: 0.25rem 0.75rem;
-  width: fit-content;
-}
-
-.featuredBadgeDot {
-  width: 6px;
-  height: 6px;
-  border-radius: 50%;
-  background: var(--accent);
-  animation: pulse-dot 2s ease-in-out infinite;
-}
-
-@keyframes pulse-dot {
-  0%,
-  100% {
-    opacity: 1;
-  }
-  50% {
-    opacity: 0.3;
-  }
+  font-size: 10rem;
+  font-weight: 900;
+  line-height: 1;
+  color: var(--text);
+  opacity: 0.04;
+  pointer-events: none;
+  user-select: none;
 }
 
 .featuredName {
@@ -123,13 +111,6 @@
   font-size: 1rem;
   color: var(--text-muted);
   line-height: 1.6;
-}
-
-.featuredImpact {
-  font-family: var(--font-display);
-  font-size: 0.85rem;
-  font-weight: 600;
-  color: var(--gold);
 }
 
 .featuredTags {
@@ -153,7 +134,7 @@
   transition: color 0.3s ease;
 }
 
-.featuredLink:hover {
+.featuredCard:hover .featuredLink {
   color: var(--accent);
 }
 
@@ -161,56 +142,13 @@
   transition: transform 0.3s ease;
 }
 
-.featuredLink:hover svg {
+.featuredCard:hover .featuredLink svg {
   transform: translateX(4px);
 }
 
-/* ── Grid ────────────────────────────────────────────────────────── */
-
-.grid {
-  display: grid;
-  grid-template-columns: repeat(3, 1fr);
-  gap: 1.5rem;
-}
-
-/* ── Card ────────────────────────────────────────────────────────── */
-
-.card {
-  background: var(--bg-alt);
-  border: 1px solid var(--border);
-  border-radius: 12px;
-  overflow: hidden;
-  display: flex;
-  flex-direction: column;
-  transition: transform 0.4s cubic-bezier(0.22, 1, 0.36, 1),
-    box-shadow 0.4s cubic-bezier(0.22, 1, 0.36, 1);
-}
-
-.card:hover {
-  transform: translateY(-4px);
-  box-shadow: 0 16px 48px rgba(252, 25, 59, 0.06),
-    0 6px 20px rgba(0, 0, 0, 0.35);
-}
-
-.cardImageWrap {
-  position: relative;
-  width: 100%;
-  aspect-ratio: 16 / 10;
-  overflow: hidden;
-}
-
-.cardImageWrap img {
-  transition: transform 0.6s cubic-bezier(0.22, 1, 0.36, 1);
-}
-
-.card:hover .cardImageWrap img {
-  transform: scale(1.04);
-}
+/* -- LIVE Badge ----------------------------------------------------- */
 
 .liveBadge {
-  position: absolute;
-  top: 12px;
-  right: 12px;
   display: inline-flex;
   align-items: center;
   gap: 0.35rem;
@@ -226,7 +164,7 @@
   border: 1px solid rgba(34, 197, 94, 0.3);
   border-radius: 100px;
   padding: 0.2rem 0.6rem;
-  z-index: 2;
+  width: fit-content;
 }
 
 .liveDot {
@@ -237,12 +175,101 @@
   animation: pulse-dot 2s ease-in-out infinite;
 }
 
+@keyframes pulse-dot {
+  0%,
+  100% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.3;
+  }
+}
+
+/* -- Grid ----------------------------------------------------------- */
+
+.grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 1.5rem;
+}
+
+/* -- Card ----------------------------------------------------------- */
+
+.card {
+  background: var(--bg-alt);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  text-decoration: none;
+  color: inherit;
+  transition: transform 0.4s cubic-bezier(0.22, 1, 0.36, 1),
+    border-color 0.4s cubic-bezier(0.22, 1, 0.36, 1),
+    box-shadow 0.4s cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+.card:hover {
+  transform: translateY(-4px);
+  border-color: var(--accent);
+  box-shadow: 0 16px 48px rgba(252, 25, 59, 0.06),
+    0 6px 20px rgba(0, 0, 0, 0.35);
+}
+
+/* -- Card Image ----------------------------------------------------- */
+
+.cardImageWrap {
+  position: relative;
+  width: 100%;
+  aspect-ratio: 16 / 10;
+  overflow: hidden;
+}
+
+.cardImageWrap img {
+  filter: grayscale(40%);
+  transition: transform 0.6s cubic-bezier(0.22, 1, 0.36, 1),
+    filter 0.6s cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+.card:hover .cardImageWrap img {
+  transform: scale(1.04);
+  filter: grayscale(0%);
+}
+
+/* -- Card Number Watermark ------------------------------------------ */
+
+.cardNumber {
+  position: absolute;
+  bottom: -0.2em;
+  right: 0.1em;
+  font-family: var(--font-display);
+  font-size: 5rem;
+  font-weight: 900;
+  line-height: 1;
+  color: white;
+  opacity: 0.08;
+  pointer-events: none;
+  user-select: none;
+  z-index: 1;
+}
+
+/* -- LIVE Badge inside card image ----------------------------------- */
+
+.cardImageWrap .liveBadge {
+  position: absolute;
+  top: 12px;
+  right: 12px;
+  z-index: 2;
+}
+
+/* -- Card Body ------------------------------------------------------ */
+
 .cardBody {
   padding: 1.25rem 1.5rem 1.5rem;
   display: flex;
   flex-direction: column;
   flex: 1;
-  gap: 0.6rem;
+  gap: 0.5rem;
 }
 
 .cardName {
@@ -259,22 +286,15 @@
   line-height: 1.5;
 }
 
-.cardImpact {
-  font-family: var(--font-display);
-  font-size: 0.78rem;
-  font-weight: 600;
-  color: var(--gold);
-  margin-top: auto;
-}
-
 .cardTags {
   display: flex;
   flex-wrap: wrap;
   gap: 0.4rem;
-  margin-top: 0.5rem;
+  margin-top: auto;
+  padding-top: 0.5rem;
 }
 
-/* ── Tag (shared) ────────────────────────────────────────────────── */
+/* -- Tag (shared) --------------------------------------------------- */
 
 .tag {
   font-family: var(--font-display);
@@ -287,9 +307,16 @@
   border-radius: 100px;
   padding: 0.2rem 0.6rem;
   white-space: nowrap;
+  transition: border-color 0.3s ease, color 0.3s ease;
 }
 
-/* ── Stats Row ───────────────────────────────────────────────────── */
+.card:hover .tag,
+.featuredCard:hover .tag {
+  border-color: rgba(252, 25, 59, 0.3);
+  color: var(--text);
+}
+
+/* -- Stats Row ------------------------------------------------------ */
 
 .statsRow {
   display: grid;
@@ -312,10 +339,6 @@
   line-height: 1;
 }
 
-.statValueAccent {
-  color: var(--accent);
-}
-
 .statLabel {
   font-family: var(--font-body);
   font-size: 0.8rem;
@@ -325,7 +348,7 @@
   letter-spacing: 0.1em;
 }
 
-/* ── Responsive ──────────────────────────────────────────────────── */
+/* -- Responsive ----------------------------------------------------- */
 
 @media (max-width: 1024px) {
   .grid {
@@ -334,6 +357,10 @@
 
   .featuredImageWrap {
     width: 50%;
+  }
+
+  .featuredNumber {
+    font-size: 7rem;
   }
 }
 
@@ -355,6 +382,13 @@
     padding: 1.5rem;
   }
 
+  .featuredNumber {
+    font-size: 6rem;
+    top: auto;
+    bottom: 0.5rem;
+    right: 0.5rem;
+  }
+
   .grid {
     grid-template-columns: 1fr;
   }
@@ -369,5 +403,9 @@
   .statsRow {
     grid-template-columns: 1fr;
     gap: 1.5rem;
+  }
+
+  .featuredNumber {
+    font-size: 5rem;
   }
 }
