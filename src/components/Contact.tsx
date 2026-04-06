@@ -25,7 +25,7 @@ export default function Contact() {
       }}
     >
       <div className="mx-auto grid max-w-7xl gap-16 lg:grid-cols-2 lg:gap-24">
-        {/* ── Left: Info + CTA ──────────────────────────────────────── */}
+        {/* -- Left: Info + CTA ---------------------------------------- */}
         <div className="flex flex-col justify-center gap-8">
           <div className="space-y-4">
             <h2 className="font-display text-[clamp(2rem,5vw,3.5rem)] font-bold leading-[1.1] text-text">
@@ -86,7 +86,7 @@ export default function Contact() {
           </div>
         </div>
 
-        {/* ── Right: Contact Form ───────────────────────────────────── */}
+        {/* -- Right: Contact Form ------------------------------------- */}
         <form
           onSubmit={handleSubmit}
           className="flex flex-col gap-6 rounded-2xl border border-border bg-bg-alt/40 p-8 backdrop-blur-sm"

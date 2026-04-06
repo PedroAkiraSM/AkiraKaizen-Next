@@ -6,7 +6,7 @@ import { ScrollTrigger } from 'gsap/ScrollTrigger';
 import SplitType from 'split-type';
 import styles from './Hero.module.css';
 
-/* ── Part Definitions ──────────────────────────────────────────── */
+/* -- Part Definitions -------------------------------------------- */
 
 interface PartDef {
   src: string;
@@ -56,7 +56,7 @@ const PARTS: PartDef[] = [
 
 const STAGE_LABELS = ['I', 'II', 'III', 'IV'] as const;
 
-/* ── Component ─────────────────────────────────────────────────── */
+/* -- Component --------------------------------------------------- */
 
 export default function Hero() {
   const wrapperRef = useRef<HTMLDivElement>(null);
@@ -93,7 +93,7 @@ export default function Hero() {
     const cta = ctaRef.current;
     const scrollInd = scrollIndicatorRef.current;
 
-    /* ── Initial text reveal animation ─────────────────────────── */
+    /* -- Initial text reveal animation --------------------------- */
     if (bgText) {
       const split = new SplitType(bgText as HTMLElement, { types: 'chars' });
       if (split.chars) {
@@ -112,9 +112,9 @@ export default function Hero() {
       }
     }
 
-    /* ───────────────────────────────────────────────────────────────
+    /* ---------------------------------------------------------------
      * Master scrub timeline  (progress 0 → 1 maps to 300vh scroll)
-     * ─────────────────────────────────────────────────────────────*/
+     * -------------------------------------------------------------*/
     const tl = gsap.timeline({
       scrollTrigger: {
         trigger: wrapper,
@@ -196,9 +196,9 @@ export default function Hero() {
     /* 8. CTAs appear (85-95%) */
     tw(cta, { opacity: 1, duration: 0.10, ease: 'power1.inOut' }, 0.85);
 
-    /* ───────────────────────────────────────────────────────────────
+    /* ---------------------------------------------------------------
      * Eye blink system
-     * ─────────────────────────────────────────────────────────────*/
+     * -------------------------------------------------------------*/
 
     function runNormalBlink() {
       const open = p.olhosAbertos;
@@ -261,7 +261,7 @@ export default function Hero() {
     scheduleNormalBlink();
     scheduleSamuraiBlink();
 
-    /* ── Cleanup ─────────────────────────────────────────────────── */
+    /* -- Cleanup --------------------------------------------------- */
     return () => {
       tl.kill();
       ScrollTrigger.getAll().forEach((st) => st.kill());
@@ -273,24 +273,24 @@ export default function Hero() {
   return (
     <div ref={wrapperRef} className={styles.heroWrapper} id="hero">
       <section className={styles.hero} aria-label="Hero">
-        {/* ── Animated grain noise ───────────────────────────────── */}
+        {/* -- Animated grain noise --------------------------------- */}
         <div className={styles.heroGrain} aria-hidden="true" />
 
-        {/* ── Decorative frame (single border via CSS ::after) ──── */}
+        {/* -- Decorative frame (single border via CSS ::after) ---- */}
 
-        {/* ── Side text left ──────────────────────────────────────── */}
+        {/* -- Side text left ---------------------------------------- */}
         <div className={styles.sideTextLeft} aria-hidden="true">
           <span className={styles.verticalText}>DIGITAL CRAFTSMAN</span>
           <span className={styles.verticalText}>EST. 2024</span>
         </div>
 
-        {/* ── Side text right ─────────────────────────────────────── */}
+        {/* -- Side text right --------------------------------------- */}
         <div className={styles.sideTextRight} aria-hidden="true">
           <span className={styles.verticalTextKanji}>改善</span>
           <span className={styles.verticalTextPage}>01/04</span>
         </div>
 
-        {/* ── Background text ─────────────────────────────────────── */}
+        {/* -- Background text --------------------------------------- */}
         <div className={styles.bgText} aria-hidden="true">
           <div ref={bgTextRef} className={styles.bgTextInner}>
             <span>AKIRA</span>
@@ -298,7 +298,7 @@ export default function Hero() {
           </div>
         </div>
 
-        {/* ── Character assembly ──────────────────────────────────── */}
+        {/* -- Character assembly ------------------------------------ */}
         <div className={styles.characterContainer}>
           {PARTS.map((part) => (
             /* eslint-disable-next-line @next/next/no-img-element */
@@ -321,7 +321,7 @@ export default function Hero() {
           ))}
         </div>
 
-        {/* ── Stage indicator (I-IV) ──────────────────────────────── */}
+        {/* -- Stage indicator (I-IV) -------------------------------- */}
         <div className={styles.stageIndicator} aria-hidden="true">
           <span ref={stageLabelRef} className={styles.stageLabel}>{STAGE_LABELS[0]}</span>
           <div className={styles.stageDots}>
@@ -335,7 +335,7 @@ export default function Hero() {
           </div>
         </div>
 
-        {/* ── Scroll indicator ────────────────────────────────────── */}
+        {/* -- Scroll indicator -------------------------------------- */}
         <div ref={scrollIndicatorRef} className={styles.scrollIndicator} aria-hidden="true">
           <span className={styles.scrollText}>SCROLL</span>
           <div className={styles.scrollLine}>
@@ -343,7 +343,7 @@ export default function Hero() {
           </div>
         </div>
 
-        {/* ── CTAs ────────────────────────────────────────────────── */}
+        {/* -- CTAs -------------------------------------------------- */}
         <div
           ref={ctaRef}
           className={styles.ctaContainer}

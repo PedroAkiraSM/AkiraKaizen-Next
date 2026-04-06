@@ -8,7 +8,7 @@ import styles from './Projects.module.css';
 
 gsap.registerPlugin(ScrollTrigger);
 
-/* ── Data ─────────────────────────────────────────────────────────── */
+/* -- Data ----------------------------------------------------------- */
 
 interface Project {
   name: string;
@@ -94,7 +94,7 @@ const STATS: Stat[] = [
   { value: 7, suffix: '+', label: 'Projetos em producao' },
 ];
 
-/* ── Arrow Icon ───────────────────────────────────────────────────── */
+/* -- Arrow Icon ----------------------------------------------------- */
 
 function ArrowIcon() {
   return (
@@ -116,7 +116,7 @@ function ArrowIcon() {
   );
 }
 
-/* ── Component ────────────────────────────────────────────────────── */
+/* -- Component ------------------------------------------------------ */
 
 export default function Projects() {
   const sectionRef = useRef<HTMLElement>(null);
@@ -126,7 +126,7 @@ export default function Projects() {
 
   useEffect(() => {
     const ctx = gsap.context(() => {
-      /* ── Card stagger animation ─────────────────────────────────── */
+      /* -- Card stagger animation ----------------------------------- */
       const cards = cardsRef.current.filter(Boolean) as HTMLAnchorElement[];
 
       cards.forEach((card, i) => {
@@ -148,7 +148,7 @@ export default function Projects() {
         );
       });
 
-      /* ── Counter animation ──────────────────────────────────────── */
+      /* -- Counter animation ---------------------------------------- */
       if (statsRef.current) {
         const statEls = statValuesRef.current.filter(
           Boolean,
@@ -188,14 +188,14 @@ export default function Projects() {
   return (
     <section id="projetos" ref={sectionRef} className={styles.section}>
       <div className="max-w-[1200px] mx-auto">
-        {/* ── Header ──────────────────────────────────────────────── */}
+        {/* -- Header ------------------------------------------------ */}
         <p className={styles.label}>PROJETOS</p>
         <h2 className={styles.title}>
           7 projetos<span className={styles.titleDot}>.</span> Todos em
           produ&ccedil;&atilde;o<span className={styles.titleDot}>.</span>
         </h2>
 
-        {/* ── Featured Card ───────────────────────────────────────── */}
+        {/* -- Featured Card ----------------------------------------- */}
         <a
           href={featured.url}
           target="_blank"
@@ -237,7 +237,7 @@ export default function Projects() {
           </div>
         </a>
 
-        {/* ── Regular Cards Grid ──────────────────────────────────── */}
+        {/* -- Regular Cards Grid ------------------------------------ */}
         <div className={styles.grid}>
           {regular.map((project, i) => (
             <a
@@ -280,7 +280,7 @@ export default function Projects() {
           ))}
         </div>
 
-        {/* ── Stats Row ───────────────────────────────────────────── */}
+        {/* -- Stats Row --------------------------------------------- */}
         <div className={styles.statsRow} ref={statsRef}>
           {STATS.map((stat, i) => (
             <div key={stat.label} className={styles.statItem}>
