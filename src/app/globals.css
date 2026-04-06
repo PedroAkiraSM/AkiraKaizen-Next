@@ -3,9 +3,25 @@
 /* ── Fonts ────────────────────────────────────────────────────────── */
 
 @font-face {
-  font-family: "Extenda Hecto";
-  src: url("/assets/fonts/Extenda-Hecto.ttf") format("truetype");
-  font-weight: normal;
+  font-family: "PP Nikkei Pacific";
+  src: url("/assets/fonts/PPNikkeiPacific-Ultrabold.otf") format("opentype");
+  font-weight: 800;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: "PP Nikkei Pacific";
+  src: url("/assets/fonts/PPNikkeiPacific-Regular.otf") format("opentype");
+  font-weight: 400;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: "PP Nikkei Pacific";
+  src: url("/assets/fonts/PPNikkeiPacific-Light.otf") format("opentype");
+  font-weight: 300;
   font-style: normal;
   font-display: swap;
 }
@@ -22,10 +38,10 @@
   --text-muted: #8a7b6b;
   --border: #1e1a17;
 
-  --font-display: var(--font-sora), "Sora", sans-serif;
+  --font-display: "PP Nikkei Pacific", var(--font-sora), "Sora", sans-serif;
   --font-body: var(--font-dm-sans), "DM Sans", sans-serif;
   --font-kanji: var(--font-noto-serif-jp), "Noto Serif JP", serif;
-  --font-accent: "Extenda Hecto", sans-serif;
+  --font-accent: "PP Nikkei Pacific", sans-serif;
 }
 
 @theme inline {
