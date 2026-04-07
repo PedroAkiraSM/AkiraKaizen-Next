@@ -121,11 +121,35 @@ export default function Hero() {
     let tl: gsap.core.Timeline | null = null;
 
     if (isMobile) {
-      // MOBILE: auto-play armor assembly after 3s
-      mTl = gsap.timeline({ delay: 3 });
+      // MOBILE: chromatic aberration intro + auto armor assembly
+      mTl = gsap.timeline({ delay: 1.8 });
 
-      // Text fades out
-      if (bgText) mTl.to(bgText, { scale: 1.1, opacity: 0, duration: 1.2, ease: 'power2.inOut' }, 0);
+      // Chromatic aberration text intro: RGB split -> converge -> breathe
+      if (bgText) {
+        // Start with color offset
+        gsap.set(bgText, {
+          textShadow: '-6px 0 rgba(0,200,255,0.7), 6px 0 rgba(255,50,80,0.7)',
+          opacity: 0,
+          scale: 1.05,
+        });
+        // Fade in with aberration
+        mTl.to(bgText, { opacity: 1, duration: 0.4, ease: 'power2.out' }, 0);
+        // Converge color channels
+        mTl.to(bgText, {
+          textShadow: '0px 0 rgba(0,200,255,0), 0px 0 rgba(255,50,80,0)',
+          scale: 1,
+          duration: 1,
+          ease: 'sine.inOut',
+        }, 0.3);
+        // After armor assembles, subtle breathing glow loop
+        mTl.to(bgText, {
+          textShadow: '0 0 30px rgba(255,255,255,0.15), 0 0 60px rgba(252,25,59,0.1)',
+          duration: 1.5,
+          ease: 'sine.inOut',
+          repeat: -1,
+          yoyo: true,
+        }, 5);
+      }
       // Touca out
       if (p.touca) mTl.to(p.touca, { opacity: 0, duration: 0.6, ease: 'power1.in' }, 0.3);
       // Armor in
