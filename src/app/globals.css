@@ -40,7 +40,7 @@
 
   --font-display: "PP Nikkei Pacific", var(--font-sora), "Sora", sans-serif;
   --font-body: var(--font-dm-sans), "DM Sans", sans-serif;
-  --font-kanji: var(--font-noto-serif-jp), "Noto Serif JP", serif;
+  --font-kanji: var(--font-noto-sans-jp), "Noto Sans JP", sans-serif;
   --font-accent: "PP Nikkei Pacific", sans-serif;
 }
 
