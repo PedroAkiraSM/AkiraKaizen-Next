@@ -121,10 +121,11 @@ export default function Hero() {
     let tl: gsap.core.Timeline | null = null;
 
     if (isMobile) {
-      // MOBILE: scroll-driven armor assembly (no sticky pin, just progress-based)
+      // MOBILE: armor assembles as hero scrolls out of view
+      const heroSection = wrapper.querySelector('section');
       mTl = gsap.timeline({
         scrollTrigger: {
-          trigger: wrapper,
+          trigger: heroSection || wrapper,
           start: 'top top',
           end: 'bottom top',
           scrub: 0.5,
