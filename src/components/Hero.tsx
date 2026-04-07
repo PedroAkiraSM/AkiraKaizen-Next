@@ -115,86 +115,118 @@ export default function Hero() {
     /* ---------------------------------------------------------------
      * Master scrub timeline  (progress 0 → 1 maps to 300vh scroll)
      * -------------------------------------------------------------*/
-    const tl = gsap.timeline({
-      scrollTrigger: {
-        trigger: wrapper,
-        start: 'top top',
-        end: 'bottom bottom',
-        scrub: 0.8,
-        onUpdate: (self) => {
-          const progress = self.progress;
-          let stage: number;
-          if (progress < 0.25) stage = 0;
-          else if (progress < 0.50) stage = 1;
-          else if (progress < 0.75) stage = 2;
-          else stage = 3;
+    const isMobile = window.innerWidth <= 768;
 
-          // Update DOM directly — no React re-render, no GSAP opacity reset
-          if (stageLabelRef.current) {
-            stageLabelRef.current.textContent = STAGE_LABELS[stage];
-          }
-          stageDotsRef.current.forEach((dot, i) => {
-            if (dot) dot.classList.toggle(styles.stageDotActive, i === stage);
-          });
-          if (ctaRef.current) {
-            ctaRef.current.classList.toggle(styles.ctaContainerVisible, stage === 3);
-          }
+    let mTl: gsap.core.Timeline | null = null;
+    let tl: gsap.core.Timeline | null = null;
+
+    if (isMobile) {
+      // MOBILE: auto-play armor assembly after 3s
+      mTl = gsap.timeline({ delay: 3 });
+
+      // Text fades out
+      if (bgText) mTl.to(bgText, { scale: 1.1, opacity: 0, duration: 1.2, ease: 'power2.inOut' }, 0);
+      // Touca out
+      if (p.touca) mTl.to(p.touca, { opacity: 0, duration: 0.6, ease: 'power1.in' }, 0.3);
+      // Armor in
+      if (p.camisaFundo) mTl.fromTo(p.camisaFundo, { yPercent: 30, opacity: 0 }, { yPercent: 0, opacity: 1, duration: 1, ease: 'power2.out' }, 0.6);
+      if (p.ombreiraE) mTl.fromTo(p.ombreiraE, { xPercent: -60, opacity: 0 }, { xPercent: 0, opacity: 1, duration: 0.8, ease: 'power2.out' }, 0.9);
+      if (p.ombreiraD) mTl.fromTo(p.ombreiraD, { xPercent: 60, opacity: 0 }, { xPercent: 0, opacity: 1, duration: 0.8, ease: 'power2.out' }, 0.9);
+      if (p.grupo) mTl.to(p.grupo, { opacity: 1, duration: 0.6, ease: 'power1.inOut' }, 1.3);
+      // Mask
+      if (p.mascara) mTl.fromTo(p.mascara, { yPercent: 20, opacity: 0 }, { yPercent: 0, opacity: 1, duration: 0.8, ease: 'power2.out' }, 2);
+      // Helmet + hide face parts
+      if (p.cabelo) mTl.to(p.cabelo, { opacity: 0, duration: 0.5, ease: 'power1.in' }, 2.8);
+      if (p.capacete) mTl.fromTo(p.capacete, { yPercent: -40, opacity: 0 }, { yPercent: 0, opacity: 1, duration: 0.8, ease: 'power2.out' }, 2.8);
+      if (p.sobrancelhas) mTl.to(p.sobrancelhas, { opacity: 0, duration: 0.4, ease: 'power1.in' }, 3);
+      if (p.olhosAbertos) mTl.to(p.olhosAbertos, { opacity: 0, duration: 0.4, ease: 'power1.in' }, 3.1);
+      if (p.oculos) mTl.to(p.oculos, { opacity: 0, duration: 0.4, ease: 'power1.in' }, 3.1);
+      // Samurai eyes
+      if (p.samuraiAberto) mTl.to(p.samuraiAberto, { opacity: 1, duration: 0.3, ease: 'power1.inOut' }, 3.5);
+
+    } else {
+      // DESKTOP: keep existing scroll-driven timeline exactly as-is
+      tl = gsap.timeline({
+        scrollTrigger: {
+          trigger: wrapper,
+          start: 'top top',
+          end: 'bottom bottom',
+          scrub: 0.8,
+          onUpdate: (self) => {
+            const progress = self.progress;
+            let stage: number;
+            if (progress < 0.25) stage = 0;
+            else if (progress < 0.50) stage = 1;
+            else if (progress < 0.75) stage = 2;
+            else stage = 3;
+
+            // Update DOM directly — no React re-render, no GSAP opacity reset
+            if (stageLabelRef.current) {
+              stageLabelRef.current.textContent = STAGE_LABELS[stage];
+            }
+            stageDotsRef.current.forEach((dot, i) => {
+              if (dot) dot.classList.toggle(styles.stageDotActive, i === stage);
+            });
+            if (ctaRef.current) {
+              ctaRef.current.classList.toggle(styles.ctaContainerVisible, stage === 3);
+            }
+          },
         },
-      },
-    });
+      });
 
-    // Helper: safe fromTo that skips if the element is missing
-    const ft = (
-      el: HTMLElement | null | undefined,
-      from: gsap.TweenVars,
-      to: gsap.TweenVars,
-      position: number,
-    ) => {
-      if (el) tl.fromTo(el, from, to, position);
-    };
+      // Helper: safe fromTo that skips if the element is missing
+      const ft = (
+        el: HTMLElement | null | undefined,
+        from: gsap.TweenVars,
+        to: gsap.TweenVars,
+        position: number,
+      ) => {
+        if (el) tl!.fromTo(el, from, to, position);
+      };
 
-    const tw = (
-      el: HTMLElement | null | undefined,
-      vars: gsap.TweenVars,
-      position: number,
-    ) => {
-      if (el) tl.to(el, vars, position);
-    };
+      const tw = (
+        el: HTMLElement | null | undefined,
+        vars: gsap.TweenVars,
+        position: number,
+      ) => {
+        if (el) tl!.to(el, vars, position);
+      };
 
-    /* 1. Scroll indicator fades out (0-5%) */
-    tw(scrollInd, { opacity: 0, duration: 0.05, ease: 'none' }, 0);
+      /* 1. Scroll indicator fades out (0-5%) */
+      tw(scrollInd, { opacity: 0, duration: 0.05, ease: 'none' }, 0);
 
-    /* 2. Background text: scale 1 → 1.15, opacity 1 → 0 over 0-50% */
-    tw(bgText, { scale: 1.15, opacity: 0, duration: 0.50, ease: 'none' }, 0);
+      /* 2. Background text: scale 1 → 1.15, opacity 1 → 0 over 0-50% */
+      tw(bgText, { scale: 1.15, opacity: 0, duration: 0.50, ease: 'none' }, 0);
 
-    /* 3. Touca fades out (5-20%) */
-    tw(p.touca, { opacity: 0, duration: 0.15, ease: 'power1.in' }, 0.05);
+      /* 3. Touca fades out (5-20%) */
+      tw(p.touca, { opacity: 0, duration: 0.15, ease: 'power1.in' }, 0.05);
 
-    /* 4. Armor enters (10-42%) */
-    // camisaPretaFundoNova rises from below
-    ft(p.camisaFundo, { yPercent: 30, opacity: 0 }, { yPercent: 0, opacity: 1, duration: 0.32, ease: 'power2.out' }, 0.10);
-    // OmbreiraE enters from left
-    ft(p.ombreiraE, { xPercent: -60, opacity: 0 }, { xPercent: 0, opacity: 1, duration: 0.28, ease: 'power2.out' }, 0.14);
-    // OmbreiraD enters from right
-    ft(p.ombreiraD, { xPercent: 60, opacity: 0 }, { xPercent: 0, opacity: 1, duration: 0.28, ease: 'power2.out' }, 0.14);
-    // Grupo fades in
-    tw(p.grupo, { opacity: 1, duration: 0.20, ease: 'power1.inOut' }, 0.22);
+      /* 4. Armor enters (10-42%) */
+      // camisaPretaFundoNova rises from below
+      ft(p.camisaFundo, { yPercent: 30, opacity: 0 }, { yPercent: 0, opacity: 1, duration: 0.32, ease: 'power2.out' }, 0.10);
+      // OmbreiraE enters from left
+      ft(p.ombreiraE, { xPercent: -60, opacity: 0 }, { xPercent: 0, opacity: 1, duration: 0.28, ease: 'power2.out' }, 0.14);
+      // OmbreiraD enters from right
+      ft(p.ombreiraD, { xPercent: 60, opacity: 0 }, { xPercent: 0, opacity: 1, duration: 0.28, ease: 'power2.out' }, 0.14);
+      // Grupo fades in
+      tw(p.grupo, { opacity: 1, duration: 0.20, ease: 'power1.inOut' }, 0.22);
 
-    /* 5. Mask appears from below (40-58%) */
-    ft(p.mascara, { yPercent: 20, opacity: 0 }, { yPercent: 0, opacity: 1, duration: 0.18, ease: 'power2.out' }, 0.40);
+      /* 5. Mask appears from below (40-58%) */
+      ft(p.mascara, { yPercent: 20, opacity: 0 }, { yPercent: 0, opacity: 1, duration: 0.18, ease: 'power2.out' }, 0.40);
 
-    /* 6. Helmet descends, hair fades out, eyes/sobrancelhas/oculos hide WITH helmet (60-82%) */
-    tw(p.cabelo, { opacity: 0, duration: 0.15, ease: 'power1.in' }, 0.60);
-    ft(p.capacete, { yPercent: -40, opacity: 0 }, { yPercent: 0, opacity: 1, duration: 0.22, ease: 'power2.out' }, 0.60);
-    tw(p.sobrancelhas, { opacity: 0, duration: 0.10, ease: 'power1.in' }, 0.62);
-    tw(p.olhosAbertos, { opacity: 0, duration: 0.10, ease: 'power1.in' }, 0.63);
-    tw(p.oculos, { opacity: 0, duration: 0.10, ease: 'power1.in' }, 0.63);
+      /* 6. Helmet descends, hair fades out, eyes/sobrancelhas/oculos hide WITH helmet (60-82%) */
+      tw(p.cabelo, { opacity: 0, duration: 0.15, ease: 'power1.in' }, 0.60);
+      ft(p.capacete, { yPercent: -40, opacity: 0 }, { yPercent: 0, opacity: 1, duration: 0.22, ease: 'power2.out' }, 0.60);
+      tw(p.sobrancelhas, { opacity: 0, duration: 0.10, ease: 'power1.in' }, 0.62);
+      tw(p.olhosAbertos, { opacity: 0, duration: 0.10, ease: 'power1.in' }, 0.63);
+      tw(p.oculos, { opacity: 0, duration: 0.10, ease: 'power1.in' }, 0.63);
 
-    /* 7. Samurai eyes appear (70-78%) */
-    tw(p.samuraiAberto, { opacity: 1, duration: 0.08, ease: 'power1.inOut' }, 0.70);
+      /* 7. Samurai eyes appear (70-78%) */
+      tw(p.samuraiAberto, { opacity: 1, duration: 0.08, ease: 'power1.inOut' }, 0.70);
 
-    /* 8. CTAs appear (85-95%) */
-    tw(cta, { opacity: 1, duration: 0.10, ease: 'power1.inOut' }, 0.85);
+      /* 8. CTAs appear (85-95%) */
+      tw(cta, { opacity: 1, duration: 0.10, ease: 'power1.inOut' }, 0.85);
+    }
 
     /* ---------------------------------------------------------------
      * Eye blink system
@@ -263,7 +295,8 @@ export default function Hero() {
 
     /* -- Cleanup --------------------------------------------------- */
     return () => {
-      tl.kill();
+      if (tl) tl.kill();
+      if (mTl) mTl.kill();
       ScrollTrigger.getAll().forEach((st) => st.kill());
       if (normalBlinkTimer.current) clearTimeout(normalBlinkTimer.current);
       if (samuraiBlinkTimer.current) clearTimeout(samuraiBlinkTimer.current);
