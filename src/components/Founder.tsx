@@ -9,25 +9,22 @@ gsap.registerPlugin(ScrollTrigger);
 
 const PHILOSOPHIES = [
   {
-    kanji: '\u6539\u5584',
-    romaji: 'Kaizen',
-    meaning: 'Melhoria cont\u00EDnua',
-    description:
-      'Cada projeto \u00E9 uma oportunidade de evoluir.',
+    kanji: '\u3053\u3060\u308F\u308A',
+    romaji: 'Kodawari',
+    meaning: 'Obsess\u00e3o pelo detalhe',
+    desc: 'Cada pixel, cada linha de c\u00f3digo, cada intera\u00e7\u00e3o \u00e9 pensada com precis\u00e3o. N\u00e3o entregamos "bom o suficiente" \u2014 entregamos excel\u00eancia.',
   },
   {
-    kanji: '\u9593',
-    romaji: 'Ma',
-    meaning: 'Espa\u00E7o intencional',
-    description:
-      'O espa\u00E7o vazio \u00E9 t\u00E3o importante quanto o conte\u00FAdo.',
+    kanji: '\u751F\u304D\u7532\u6590',
+    romaji: 'Ikigai',
+    meaning: 'Prop\u00f3sito',
+    desc: 'Tecnologia sem prop\u00f3sito \u00e9 desperd\u00edcio. Cada projeto nasce da intersec\u00e7\u00e3o entre o que voc\u00ea precisa e o que podemos criar de melhor.',
   },
   {
-    kanji: '\u9759\u5BC2',
-    romaji: 'Seijaku',
-    meaning: 'Calma energizada',
-    description:
-      'Precis\u00E3o e calma na execu\u00E7\u00E3o. Sem pressa, sem falhas.',
+    kanji: '\u4F98\u5BC2',
+    romaji: 'Wabi-Sabi',
+    meaning: 'Beleza na autenticidade',
+    desc: 'Valorizamos solu\u00e7\u00f5es aut\u00eanticas sobre templates perfeitos. Cada projeto \u00e9 \u00fanico porque cada neg\u00f3cio \u00e9 \u00fanico.',
   },
 ];
 
@@ -130,7 +127,7 @@ export default function Founder() {
         className={styles.watermark}
         aria-hidden="true"
       >
-        {'\u6539\u5584'}
+        {'\u3053\u3060\u308F\u308A'}
       </span>
 
       <div className={styles.container}>
@@ -155,7 +152,7 @@ export default function Founder() {
               <h3 className={styles.cardTitle}>{p.romaji}</h3>
               <p className={styles.cardMeaning}>{p.meaning}</p>
               <p className={styles.cardDescription}>
-                &ldquo;{p.description}&rdquo;
+                &ldquo;{p.desc}&rdquo;
               </p>
             </div>
           ))}

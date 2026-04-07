@@ -340,11 +340,11 @@
 
 @media (max-width: 768px) {
   .heroWrapper {
-    height: 100vh;
+    height: 400vh;
   }
 
   .hero {
-    position: relative;
+    position: sticky;
   }
 
   .sideTextLeft,
@@ -367,8 +367,8 @@
   }
 
   .bgText {
-    align-items: center;
-    justify-content: center;
+    align-items: flex-start;
+    padding-top: 8vh;
   }
 
   .bgTextInner {

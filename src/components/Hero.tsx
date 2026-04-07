@@ -121,52 +121,54 @@ export default function Hero() {
     let tl: gsap.core.Timeline | null = null;
 
     if (isMobile) {
-      // MOBILE: chromatic aberration intro + auto armor assembly
-      mTl = gsap.timeline({ delay: 1.8 });
+      // MOBILE: scroll-driven armor assembly (no sticky pin, just progress-based)
+      mTl = gsap.timeline({
+        scrollTrigger: {
+          trigger: wrapper,
+          start: 'top top',
+          end: 'bottom bottom',
+          scrub: 0.6,
+        },
+      });
 
-      // Chromatic aberration text intro: RGB split -> converge -> breathe
+      // Chromatic aberration text intro (plays once on load, separate from scroll)
       if (bgText) {
-        // Start with color offset
         gsap.set(bgText, {
           textShadow: '-6px 0 rgba(0,200,255,0.7), 6px 0 rgba(255,50,80,0.7)',
           opacity: 0,
           scale: 1.05,
         });
-        // Fade in with aberration
-        mTl.to(bgText, { opacity: 1, duration: 0.4, ease: 'power2.out' }, 0);
-        // Converge color channels
-        mTl.to(bgText, {
+        gsap.to(bgText, { opacity: 1, duration: 0.4, ease: 'power2.out', delay: 1.8 });
+        gsap.to(bgText, {
           textShadow: '0px 0 rgba(0,200,255,0), 0px 0 rgba(255,50,80,0)',
           scale: 1,
           duration: 1,
           ease: 'sine.inOut',
-        }, 0.3);
-        // After armor assembles, subtle breathing glow loop
-        mTl.to(bgText, {
-          textShadow: '0 0 30px rgba(255,255,255,0.15), 0 0 60px rgba(252,25,59,0.1)',
-          duration: 1.5,
-          ease: 'sine.inOut',
-          repeat: -1,
-          yoyo: true,
-        }, 5);
+          delay: 2.1,
+        });
       }
-      // Touca out
-      if (p.touca) mTl.to(p.touca, { opacity: 0, duration: 0.6, ease: 'power1.in' }, 0.3);
-      // Armor in
-      if (p.camisaFundo) mTl.fromTo(p.camisaFundo, { yPercent: 30, opacity: 0 }, { yPercent: 0, opacity: 1, duration: 1, ease: 'power2.out' }, 0.6);
-      if (p.ombreiraE) mTl.fromTo(p.ombreiraE, { xPercent: -60, opacity: 0 }, { xPercent: 0, opacity: 1, duration: 0.8, ease: 'power2.out' }, 0.9);
-      if (p.ombreiraD) mTl.fromTo(p.ombreiraD, { xPercent: 60, opacity: 0 }, { xPercent: 0, opacity: 1, duration: 0.8, ease: 'power2.out' }, 0.9);
-      if (p.grupo) mTl.to(p.grupo, { opacity: 1, duration: 0.6, ease: 'power1.inOut' }, 1.3);
-      // Mask
-      if (p.mascara) mTl.fromTo(p.mascara, { yPercent: 20, opacity: 0 }, { yPercent: 0, opacity: 1, duration: 0.8, ease: 'power2.out' }, 2);
-      // Helmet + hide face parts
-      if (p.cabelo) mTl.to(p.cabelo, { opacity: 0, duration: 0.5, ease: 'power1.in' }, 2.8);
-      if (p.capacete) mTl.fromTo(p.capacete, { yPercent: -40, opacity: 0 }, { yPercent: 0, opacity: 1, duration: 0.8, ease: 'power2.out' }, 2.8);
-      if (p.sobrancelhas) mTl.to(p.sobrancelhas, { opacity: 0, duration: 0.4, ease: 'power1.in' }, 3);
-      if (p.olhosAbertos) mTl.to(p.olhosAbertos, { opacity: 0, duration: 0.4, ease: 'power1.in' }, 3.1);
-      if (p.oculos) mTl.to(p.oculos, { opacity: 0, duration: 0.4, ease: 'power1.in' }, 3.1);
-      // Samurai eyes
-      if (p.samuraiAberto) mTl.to(p.samuraiAberto, { opacity: 1, duration: 0.3, ease: 'power1.inOut' }, 3.5);
+
+      // Touca out (0-15%)
+      if (p.touca) mTl.to(p.touca, { opacity: 0, duration: 0.15, ease: 'power1.in' }, 0.05);
+
+      // Armor enters (10-40%)
+      if (p.camisaFundo) mTl.fromTo(p.camisaFundo, { yPercent: 30, opacity: 0 }, { yPercent: 0, opacity: 1, duration: 0.30, ease: 'power2.out' }, 0.10);
+      if (p.ombreiraE) mTl.fromTo(p.ombreiraE, { xPercent: -60, opacity: 0 }, { xPercent: 0, opacity: 1, duration: 0.25, ease: 'power2.out' }, 0.15);
+      if (p.ombreiraD) mTl.fromTo(p.ombreiraD, { xPercent: 60, opacity: 0 }, { xPercent: 0, opacity: 1, duration: 0.25, ease: 'power2.out' }, 0.15);
+      if (p.grupo) mTl.to(p.grupo, { opacity: 1, duration: 0.20, ease: 'power1.inOut' }, 0.25);
+
+      // Mask (35-50%)
+      if (p.mascara) mTl.fromTo(p.mascara, { yPercent: 20, opacity: 0 }, { yPercent: 0, opacity: 1, duration: 0.15, ease: 'power2.out' }, 0.35);
+
+      // Helmet + hide face parts (50-75%)
+      if (p.cabelo) mTl.to(p.cabelo, { opacity: 0, duration: 0.12, ease: 'power1.in' }, 0.50);
+      if (p.capacete) mTl.fromTo(p.capacete, { yPercent: -40, opacity: 0 }, { yPercent: 0, opacity: 1, duration: 0.20, ease: 'power2.out' }, 0.50);
+      if (p.sobrancelhas) mTl.to(p.sobrancelhas, { opacity: 0, duration: 0.10, ease: 'power1.in' }, 0.55);
+      if (p.olhosAbertos) mTl.to(p.olhosAbertos, { opacity: 0, duration: 0.10, ease: 'power1.in' }, 0.56);
+      if (p.oculos) mTl.to(p.oculos, { opacity: 0, duration: 0.10, ease: 'power1.in' }, 0.56);
+
+      // Samurai eyes (70-80%)
+      if (p.samuraiAberto) mTl.to(p.samuraiAberto, { opacity: 1, duration: 0.08, ease: 'power1.inOut' }, 0.70);
 
     } else {
       // DESKTOP: keep existing scroll-driven timeline exactly as-is
