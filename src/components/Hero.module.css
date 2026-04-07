@@ -366,6 +366,11 @@
     bottom: 80px;
   }
 
+  .bgText {
+    align-items: flex-start;
+    padding-top: 15vh;
+  }
+
   .bgTextInner {
     font-size: clamp(5rem, 18vw, 12rem);
   }
