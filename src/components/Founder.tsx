@@ -9,22 +9,22 @@ gsap.registerPlugin(ScrollTrigger);
 
 const PHILOSOPHIES = [
   {
-    kanji: '\u3053\u3060\u308F\u308A',
-    romaji: 'Kodawari',
-    meaning: 'Obsess\u00e3o pelo detalhe',
-    desc: 'Cada pixel, cada linha de c\u00f3digo, cada intera\u00e7\u00e3o \u00e9 pensada com precis\u00e3o. N\u00e3o entregamos "bom o suficiente" \u2014 entregamos excel\u00eancia.',
+    kanji: '\u6539',
+    romaji: 'Kai',
+    meaning: 'Mudan\u00e7a',
+    desc: 'Transformamos problemas em oportunidades. Cada projeto \u00e9 uma mudan\u00e7a positiva no seu neg\u00f3cio \u2014 n\u00e3o entregamos apenas c\u00f3digo, entregamos evolu\u00e7\u00e3o.',
   },
   {
-    kanji: '\u751F\u304D\u7532\u6590',
-    romaji: 'Ikigai',
-    meaning: 'Prop\u00f3sito',
-    desc: 'Tecnologia sem prop\u00f3sito \u00e9 desperd\u00edcio. Cada projeto nasce da intersec\u00e7\u00e3o entre o que voc\u00ea precisa e o que podemos criar de melhor.',
+    kanji: '\u5584',
+    romaji: 'Zen',
+    meaning: 'Melhoria',
+    desc: 'N\u00e3o existe "pronto". Evolu\u00edmos continuamente seu produto, seu c\u00f3digo e sua presen\u00e7a digital. Cada itera\u00e7\u00e3o \u00e9 melhor que a anterior.',
   },
   {
-    kanji: '\u4F98\u5BC2',
-    romaji: 'Wabi-Sabi',
-    meaning: 'Beleza na autenticidade',
-    desc: 'Valorizamos solu\u00e7\u00f5es aut\u00eanticas sobre templates perfeitos. Cada projeto \u00e9 \u00fanico porque cada neg\u00f3cio \u00e9 \u00fanico.',
+    kanji: '\u9053',
+    romaji: 'Do',
+    meaning: 'Caminho',
+    desc: 'O caminho importa tanto quanto o destino. Processo transparente, entregas constantes e parceria real do in\u00edcio ao fim.',
   },
 ];
 
@@ -127,21 +127,18 @@ export default function Founder() {
         className={styles.watermark}
         aria-hidden="true"
       >
-        {'\u3053\u3060\u308F\u308A'}
+        {'\u6539\u5584'}
       </span>
 
       <div className={styles.container}>
         {/* Section label */}
         <span ref={labelRef} className={styles.label}>
-          SOBRE
+          MISS&Atilde;O, VIS&Atilde;O E VALORES
         </span>
 
         {/* Hero quote */}
         <h2 ref={quoteRef} className={styles.quote}>
-          N&atilde;o sou um desenvolvedor que cria c&oacute;digo.
-          <br />
-          Sou um inventor que transforma problemas em
-          solu&ccedil;&otilde;es.
+          Nosso nome carrega nossa filosofia.
         </h2>
 
         {/* Philosophy cards */}

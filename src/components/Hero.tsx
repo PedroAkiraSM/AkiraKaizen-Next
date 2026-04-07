@@ -126,8 +126,8 @@ export default function Hero() {
         scrollTrigger: {
           trigger: wrapper,
           start: 'top top',
-          end: 'bottom bottom',
-          scrub: 0.6,
+          end: 'bottom top',
+          scrub: 0.5,
         },
       });
 

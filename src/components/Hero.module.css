@@ -340,11 +340,11 @@
 
 @media (max-width: 768px) {
   .heroWrapper {
-    height: 400vh;
+    height: 200vh;
   }
 
   .hero {
-    position: sticky;
+    position: relative;
   }
 
   .sideTextLeft,
