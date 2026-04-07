@@ -339,44 +339,50 @@
 /* ── Responsive ──────────────────────────────────────────────────── */
 
 @media (max-width: 768px) {
+  .heroWrapper {
+    height: 100vh;
+  }
+
+  .hero {
+    position: relative;
+  }
+
   .sideTextLeft,
-  .sideTextRight {
+  .sideTextRight,
+  .stageIndicator,
+  .scrollIndicator {
     display: none;
   }
 
   .hero::before {
-    top: 40px;
-    height: calc(100% - 80px);
+    top: 20px;
+    height: calc(100% - 40px);
     border-width: 1px;
   }
 
   .hero::after {
-    left: 20px;
-    width: calc(100% - 40px);
+    left: 12px;
+    width: calc(100% - 24px);
     border-width: 1px;
   }
 
-  .stageIndicator {
-    right: 8px;
-    bottom: 100px;
+  .bgText {
+    align-items: center;
+    justify-content: center;
+  }
+
+  .bgTextInner {
+    font-size: clamp(4rem, 20vw, 8rem);
+  }
+
+  .characterContainer {
+    width: 150vw;
+    aspect-ratio: 1440 / 900;
   }
 
   .ctaContainer {
     flex-direction: column;
-    bottom: 80px;
-  }
-
-  .bgText {
-    align-items: flex-start;
-    padding-top: 15vh;
-  }
-
-  .bgTextInner {
-    font-size: clamp(5rem, 18vw, 12rem);
-  }
-
-  .characterContainer {
-    width: 140vw;
-    aspect-ratio: 1440 / 900;
+    bottom: 40px;
+    gap: 10px;
   }
 }
