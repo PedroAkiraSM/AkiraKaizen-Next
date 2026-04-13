@@ -38,13 +38,13 @@ export default function CountdownDisplay({ number, countdownDuration }: Countdow
   }
 
   return (
-    <div className="fixed inset-0 z-[4] pointer-events-none flex items-center justify-center">
+    <div className="fixed inset-0 z-[4] pointer-events-none flex items-end justify-center">
       <div
         className="relative transition-all duration-300"
         style={{
-          width: 'clamp(180px, 35vw, 350px)',
-          height: 'clamp(280px, 50vh, 550px)',
-          marginTop: '10vh',
+          width: 'clamp(80px, 15vw, 160px)',
+          height: 'clamp(120px, 22vh, 250px)',
+          marginBottom: '15vh',
         }}
       >
         {KICK_FRAMES.map((src, i) => (
