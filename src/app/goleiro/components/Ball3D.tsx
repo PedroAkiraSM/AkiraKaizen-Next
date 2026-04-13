@@ -19,21 +19,23 @@ function BallMesh({ screenX, screenY, size, rotation, visible }: BallMeshProps) 
 
   const scene = useMemo(() => {
     const cloned = gltf.scene.clone();
+    // Enhance materials: light gray → pure white, dark → deep black
     cloned.traverse((child) => {
       if (child instanceof THREE.Mesh) {
-        const mat = child.material as THREE.MeshStandardMaterial;
-        const r = mat.color?.r ?? 0.5;
-        // Light colored mesh = white hexagons, dark = black pentagons
-        if (r > 0.3) {
+        const oldMat = child.material as THREE.MeshStandardMaterial;
+        const brightness = oldMat.color ? (oldMat.color.r + oldMat.color.g + oldMat.color.b) / 3 : 0.5;
+        if (brightness > 0.3) {
+          // White panels
           child.material = new THREE.MeshStandardMaterial({
             color: 0xffffff,
-            roughness: 0.3,
+            roughness: 0.25,
             metalness: 0.05,
           });
         } else {
+          // Black pentagons
           child.material = new THREE.MeshStandardMaterial({
             color: 0x111111,
-            roughness: 0.4,
+            roughness: 0.35,
             metalness: 0.02,
           });
         }
@@ -54,7 +56,7 @@ function BallMesh({ screenX, screenY, size, rotation, visible }: BallMeshProps) 
     const scale = size * 3;
     meshRef.current.scale.setScalar(Math.max(0.05, scale));
 
-    // Continuous spin
+    // Continuous realistic spin
     meshRef.current.rotation.x += 0.04;
     meshRef.current.rotation.y += 0.02;
     meshRef.current.rotation.z = (rotation * Math.PI) / 180 * 0.3;
