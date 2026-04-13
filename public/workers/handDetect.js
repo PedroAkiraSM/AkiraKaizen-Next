@@ -1,19 +1,17 @@
 /**
- * Hand Detection Web Worker — uses MediaPipe WASM (CPU) backend.
- * GPU doesn't work in workers, but CPU/WASM does.
- * Runs completely off the main thread.
+ * Hand Detection Web Worker — MediaPipe WASM (CPU) backend.
+ * Classic worker (not module) — uses dynamic import() for MediaPipe.
  */
 
 let landmarker = null;
-let lastTimestamp = -1;
 let processing = false;
 
 async function init() {
   try {
-    // Dynamic import of MediaPipe ESM
-    const vision = await import(
-      'https://cdn.jsdelivr.net/npm/@mediapipe/tasks-vision@0.10.18/vision_bundle.mjs'
-    );
+    self.postMessage({ type: 'status', msg: 'loading MediaPipe...' });
+
+    // Dynamic import works in classic workers in modern browsers
+    const vision = await Function('return import("https://cdn.jsdelivr.net/npm/@mediapipe/tasks-vision@0.10.18/vision_bundle.mjs")')();
 
     const { FilesetResolver, HandLandmarker } = vision;
 
@@ -25,17 +23,14 @@ async function init() {
       baseOptions: {
         modelAssetPath:
           'https://storage.googleapis.com/mediapipe-models/hand_landmarker/hand_landmarker/float16/latest/hand_landmarker.task',
-        delegate: 'CPU', // CPU/WASM works in Web Workers (GPU doesn't)
+        delegate: 'CPU',
       },
-      runningMode: 'IMAGE', // Process individual frames, not video stream
+      runningMode: 'IMAGE',
       numHands: 2,
       minHandDetectionConfidence: 0.5,
       minHandPresenceConfidence: 0.5,
       minTrackingConfidence: 0.4,
     });
-
-    // Warmup
-    self.postMessage({ type: 'status', msg: 'warming up' });
 
     self.postMessage({ type: 'ready' });
   } catch (e) {
@@ -75,7 +70,6 @@ function processFrame(bitmap) {
         if (ly > yMaxVal) yMaxVal = ly;
       }
 
-      // Mirror X (front camera)
       const m = 0.03;
       const xMin = Math.max(0, 1 - rawXMax - m);
       const yMin = Math.max(0, yMinVal - m);
@@ -84,7 +78,6 @@ function processFrame(bitmap) {
       const cx = (xMin + xMax) / 2;
       const cy = (yMin + yMax) / 2;
 
-      // Angle
       const wrist = lms[0];
       const midBase = lms[9];
       const dx = -(midBase.x - wrist.x);
@@ -94,9 +87,8 @@ function processFrame(bitmap) {
       hands.push({ cx, cy, xMin, yMin, xMax, yMax, angle });
     }
 
-    // Assign sides by position
     if (hands.length === 2) {
-      hands.sort((a, b) => a.cx - b.cx);
+      hands.sort(function(a, b) { return a.cx - b.cx; });
       hands[0].side = 'ESQUERDA';
       hands[1].side = 'DIREITA';
     } else if (hands.length === 1) {
@@ -104,11 +96,11 @@ function processFrame(bitmap) {
     }
   }
 
-  self.postMessage({ type: 'hands', hands });
+  self.postMessage({ type: 'hands', hands: hands });
   processing = false;
 }
 
-self.onmessage = (e) => {
+self.onmessage = function(e) {
   if (e.data.type === 'init') {
     init();
   } else if (e.data.type === 'frame') {

@@ -55,7 +55,8 @@ export function useHandTracking(videoRef: React.RefObject<HTMLVideoElement | nul
     captureCanvasRef.current = canvas;
 
     // Create worker
-    const worker = new Worker('/workers/handDetect.js', { type: 'module' });
+    // Classic worker (not module) — uses Function() for dynamic import inside
+    const worker = new Worker('/workers/handDetect.js');
     workerRef.current = worker;
 
     worker.onmessage = (e) => {
