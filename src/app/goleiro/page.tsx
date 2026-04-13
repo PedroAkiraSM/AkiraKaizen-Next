@@ -98,7 +98,7 @@ export default function GoleiroPage() {
     cameraStartedRef.current = true;
     try {
       const stream = await navigator.mediaDevices.getUserMedia({
-        video: { facingMode: 'user', width: 640, height: 480 },
+        video: { facingMode: 'user', width: { ideal: 480 }, height: { ideal: 360 } },
       });
       if (videoRef.current) {
         videoRef.current.srcObject = stream;
@@ -112,13 +112,19 @@ export default function GoleiroPage() {
 
   // ─── Game loop callback ─────────────────────────────────────────────────
 
+  // Track detection frames separately from render frames
+  const detectFrameRef = useRef(0);
+  const DETECT_EVERY_N_FRAMES = 3; // detect hands every 3rd frame, render at 60fps
+
   const onFrame = useCallback((dt: number, now: number) => {
     const game = gameRef.current;
     const sound = soundRef.current;
     if (!game || !sound) return;
 
-    // Update hand tracking
-    if (tracker.readyRef.current) {
+    // Only run MediaPipe detection every Nth frame to avoid blocking the main thread
+    detectFrameRef.current++;
+    if (detectFrameRef.current >= DETECT_EVERY_N_FRAMES && tracker.readyRef.current) {
+      detectFrameRef.current = 0;
       handsRef.current = tracker.update();
     }
 

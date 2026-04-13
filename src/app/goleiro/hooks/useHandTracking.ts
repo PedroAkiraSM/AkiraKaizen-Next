@@ -65,6 +65,7 @@ export function useHandTracking(videoRef: React.RefObject<HTMLVideoElement | nul
         'https://cdn.jsdelivr.net/npm/@mediapipe/tasks-vision@latest/wasm'
       );
 
+      // Use float16 lite model — faster inference, good enough for game
       const landmarker = await HandLandmarker.createFromOptions(filesetResolver, {
         baseOptions: {
           modelAssetPath:
@@ -73,9 +74,9 @@ export function useHandTracking(videoRef: React.RefObject<HTMLVideoElement | nul
         },
         runningMode: 'VIDEO',
         numHands: 2,
-        minHandDetectionConfidence: 0.6,
-        minHandPresenceConfidence: 0.6,
-        minTrackingConfidence: 0.6,
+        minHandDetectionConfidence: 0.55,
+        minHandPresenceConfidence: 0.55,
+        minTrackingConfidence: 0.45, // lower tracking = fewer re-detections (faster)
       });
 
       landmarkerRef.current = landmarker;
