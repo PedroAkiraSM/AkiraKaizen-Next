@@ -3,9 +3,10 @@
 import { useRef, useState, useCallback, useEffect } from 'react';
 import { Game } from './lib/game';
 import { SoundManager } from './lib/sounds';
-import { STATE, type DifficultyKey, type HandData } from './lib/constants';
+import { STATE, GOL, type DifficultyKey, type HandData } from './lib/constants';
 import { useHandTracking } from './hooks/useHandTracking';
 import { useGameLoop } from './hooks/useGameLoop';
+import dynamic from 'next/dynamic';
 import MenuScreen from './components/MenuScreen';
 import SelectScreen from './components/SelectScreen';
 import GameOverScreen from './components/GameOverScreen';
@@ -13,6 +14,9 @@ import HUD from './components/HUD';
 import CountdownDisplay from './components/CountdownDisplay';
 import ResultDisplay from './components/ResultDisplay';
 import GameCanvas, { type GameCanvasHandle } from './components/GameCanvas';
+
+// Dynamic import for Three.js Ball (heavy, only load when needed)
+const Ball3D = dynamic(() => import('./components/Ball3D'), { ssr: false });
 
 // ─── Asset loader ───────────────────────────────────────────────────────────
 
@@ -66,6 +70,9 @@ export default function GoleiroPage() {
   });
   const [gameOverData, setGameOverData] = useState({
     defesas: 0, gols: 0, rating: '',
+  });
+  const [ballData, setBallData] = useState({
+    x: 0.5, y: 0.5, size: 0, rotation: 0, visible: false,
   });
   const [currentConfig, setCurrentConfig] = useState(
     () => ({ label: 'MEDIO', color: '#dcc828', description: '', ballSpeed: 0.5, speedIncrement: 0.01, totalShots: 10, showArrow: true, arrowDuration: 0.4, hitboxMargin: 0.015, countdownDuration: 1.3, curveChance: 0.6, curveAmount: 0.12, defenseThreshold: 0.90 })
@@ -158,11 +165,24 @@ export default function GoleiroPage() {
       setCurrentConfig({ ...game.config });
     }
 
-    // Draw canvas (every frame - no React overhead)
+    // Draw canvas (every frame - no React overhead) — skip ball, drawn by Three.js
     canvasHandleRef.current?.draw(game, handsRef.current, now);
 
+    // Update 3D ball position every frame for smooth animation
+    const ball = game.ball;
+    if (ball && (ball.active || game.state === STATE.RESULT)) {
+      setBallData({
+        x: GOL.xPct + ball.x * GOL.wPct,
+        y: GOL.yPct + ball.y * GOL.hPct,
+        size: ball.radius * 3,
+        rotation: ball.rotation,
+        visible: true,
+      });
+    } else {
+      setBallData(prev => prev.visible ? { ...prev, visible: false } : prev);
+    }
+
     // Throttle React state updates to ~20fps (every 50ms) to avoid re-render churn.
-    // Countdown and result changes are always immediate for responsiveness.
     const shouldForceUpdate =
       countNum !== lastUIUpdateRef.current ||
       game.state !== resultData.state;
@@ -240,8 +260,19 @@ export default function GoleiroPage() {
       {/* Hidden video element for camera feed */}
       <video ref={videoRef} autoPlay playsInline className="hidden" />
 
-      {/* Game canvas */}
+      {/* Game canvas (background, gloves, arrow — no ball) */}
       <GameCanvas ref={canvasHandleRef} assets={assets} />
+
+      {/* 3D Ball overlay */}
+      {screen === 'game' && (
+        <Ball3D
+          screenX={ballData.x}
+          screenY={ballData.y}
+          size={ballData.size}
+          rotation={ballData.rotation}
+          visible={ballData.visible}
+        />
+      )}
 
       {/* HUD overlay */}
       <HUD
