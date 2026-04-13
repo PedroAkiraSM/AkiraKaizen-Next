@@ -1,70 +1,10 @@
 'use client';
 
 import { useRef, useMemo } from 'react';
-import { Canvas, useFrame } from '@react-three/fiber';
+import { Canvas, useFrame, useLoader } from '@react-three/fiber';
+import { GLTFLoader } from 'three/addons/loaders/GLTFLoader.js';
+import { MeshoptDecoder } from 'three/addons/libs/meshopt_decoder.module.js';
 import * as THREE from 'three';
-
-/**
- * Creates a soccer ball using IcosahedronGeometry.
- * The icosahedron naturally has pentagonal faces (12 pentagons)
- * which resembles a real soccer ball pattern.
- * We color pentagonal center faces black and the rest white.
- */
-function createSoccerBall(): { geometry: THREE.BufferGeometry; material: THREE.Material } {
-  const geo = new THREE.IcosahedronGeometry(1, 1);
-  const positions = geo.attributes.position;
-  const faceCount = positions.count / 3;
-
-  // Assign colors per vertex: faces near icosahedron vertices = black (pentagons)
-  const colors = new Float32Array(positions.count * 3);
-
-  // Original icosahedron vertices (12 vertices of a regular icosahedron)
-  const phi = (1 + Math.sqrt(5)) / 2;
-  const icoVerts = [
-    [-1, phi, 0], [1, phi, 0], [-1, -phi, 0], [1, -phi, 0],
-    [0, -1, phi], [0, 1, phi], [0, -1, -phi], [0, 1, -phi],
-    [phi, 0, -1], [phi, 0, 1], [-phi, 0, -1], [-phi, 0, 1],
-  ].map(v => new THREE.Vector3(v[0], v[1], v[2]).normalize());
-
-  for (let f = 0; f < faceCount; f++) {
-    // Get face center
-    const i0 = f * 3, i1 = f * 3 + 1, i2 = f * 3 + 2;
-    const cx = (positions.getX(i0) + positions.getX(i1) + positions.getX(i2)) / 3;
-    const cy = (positions.getY(i0) + positions.getY(i1) + positions.getY(i2)) / 3;
-    const cz = (positions.getZ(i0) + positions.getZ(i1) + positions.getZ(i2)) / 3;
-    const center = new THREE.Vector3(cx, cy, cz);
-
-    // Check if this face is near an original icosahedron vertex (= pentagon center)
-    let isPentagon = false;
-    for (const v of icoVerts) {
-      if (center.distanceTo(v) < 0.35) {
-        isPentagon = true;
-        break;
-      }
-    }
-
-    const r = isPentagon ? 0.06 : 1.0;
-    const g = isPentagon ? 0.06 : 1.0;
-    const b = isPentagon ? 0.06 : 1.0;
-
-    for (let v = 0; v < 3; v++) {
-      colors[(f * 3 + v) * 3] = r;
-      colors[(f * 3 + v) * 3 + 1] = g;
-      colors[(f * 3 + v) * 3 + 2] = b;
-    }
-  }
-
-  geo.setAttribute('color', new THREE.BufferAttribute(colors, 3));
-
-  const mat = new THREE.MeshStandardMaterial({
-    vertexColors: true,
-    roughness: 0.3,
-    metalness: 0.05,
-    flatShading: true,
-  });
-
-  return { geometry: geo, material: mat };
-}
 
 interface BallMeshProps {
   screenX: number;
@@ -75,9 +15,36 @@ interface BallMeshProps {
 }
 
 function BallMesh({ screenX, screenY, size, rotation, visible }: BallMeshProps) {
-  const meshRef = useRef<THREE.Mesh>(null);
+  const meshRef = useRef<THREE.Group>(null);
+  const gltf = useLoader(GLTFLoader, '/assets/goleiro/ball.glb', (loader) => {
+    loader.setMeshoptDecoder(MeshoptDecoder);
+  });
 
-  const { geometry, material } = useMemo(() => createSoccerBall(), []);
+  const scene = useMemo(() => {
+    const cloned = gltf.scene.clone();
+    cloned.traverse((child) => {
+      if (child instanceof THREE.Mesh) {
+        const mat = child.material as THREE.MeshStandardMaterial;
+        const brightness = mat.color ? (mat.color.r + mat.color.g + mat.color.b) / 3 : 0.5;
+        if (brightness > 0.3) {
+          // White panels
+          child.material = new THREE.MeshStandardMaterial({
+            color: 0xffffff,
+            roughness: 0.25,
+            metalness: 0.05,
+          });
+        } else {
+          // Black pentagons
+          child.material = new THREE.MeshStandardMaterial({
+            color: 0x111111,
+            roughness: 0.35,
+            metalness: 0.02,
+          });
+        }
+      }
+    });
+    return cloned;
+  }, [gltf]);
 
   useFrame(() => {
     if (!meshRef.current) return;
@@ -91,12 +58,13 @@ function BallMesh({ screenX, screenY, size, rotation, visible }: BallMeshProps) 
     const scale = size * 3;
     meshRef.current.scale.setScalar(Math.max(0.05, scale));
 
+    // Continuous spin
     meshRef.current.rotation.x += 0.04;
     meshRef.current.rotation.y += 0.02;
     meshRef.current.rotation.z = (rotation * Math.PI) / 180 * 0.3;
   });
 
-  return <mesh ref={meshRef} geometry={geometry} material={material} />;
+  return <primitive ref={meshRef} object={scene} />;
 }
 
 interface Ball3DProps {
