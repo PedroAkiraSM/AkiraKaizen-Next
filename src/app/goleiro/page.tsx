@@ -288,8 +288,8 @@ export default function GoleiroPage() {
         totalShots={hudData.totalShots}
       />
 
-      {/* Countdown number */}
-      <CountdownDisplay number={countdownNum} />
+      {/* Countdown — kick animation */}
+      <CountdownDisplay number={countdownNum} countdownDuration={currentConfig.countdownDuration} />
 
       {/* Result text (DEFENDEU! / GOL!) */}
       <ResultDisplay

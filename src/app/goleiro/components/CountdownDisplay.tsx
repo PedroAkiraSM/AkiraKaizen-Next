@@ -1,22 +1,69 @@
 'use client';
 
+import Image from 'next/image';
+
 interface CountdownDisplayProps {
   number: number;
+  /** Total countdown duration in seconds (from difficulty config) */
+  countdownDuration: number;
 }
 
-export default function CountdownDisplay({ number }: CountdownDisplayProps) {
+// Map countdown progress to kick frames:
+// Frame 1 (Comeco): player standing, first part of countdown
+// Frame 2 (Meio): preparing kick, middle of countdown
+// Frame 3 (Fim): kicking, last part → ball launches after this
+const KICK_FRAMES = [
+  '/assets/goleiro/Comeco.png',
+  '/assets/goleiro/Meio.png',
+  '/assets/goleiro/Fim.png',
+];
+
+export default function CountdownDisplay({ number, countdownDuration }: CountdownDisplayProps) {
+  if (number <= 0) return null;
+
+  // Determine which frame to show based on countdown progress
+  // number counts down: e.g. 3, 2, 1 for a 2s countdown
+  // Higher number = earlier in sequence
+  let frameIndex: number;
+  if (countdownDuration <= 1.0) {
+    // Short countdown: just show Meio then Fim
+    frameIndex = number > 1 ? 1 : 2;
+  } else {
+    // Normal countdown: map to 3 frames
+    const maxNum = Math.ceil(countdownDuration);
+    const progress = 1 - (number - 1) / Math.max(maxNum - 1, 1); // 0 → 1
+    if (progress < 0.33) frameIndex = 0;
+    else if (progress < 0.66) frameIndex = 1;
+    else frameIndex = 2;
+  }
+
   return (
-    <div
-      className="fixed top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 z-[8] pointer-events-none transition-opacity duration-150"
-      style={{
-        fontFamily: 'var(--font-russo)',
-        fontSize: '12rem',
-        color: '#ffd700',
-        textShadow: '0 0 60px rgba(255,215,0,0.5)',
-        opacity: number > 0 ? 1 : 0,
-      }}
-    >
-      {number > 0 ? number : ''}
+    <div className="fixed inset-0 z-[8] pointer-events-none flex items-end justify-center">
+      <div
+        className="relative transition-all duration-300"
+        style={{
+          width: 'clamp(200px, 40vw, 400px)',
+          height: 'clamp(300px, 55vh, 600px)',
+          marginBottom: '5vh',
+        }}
+      >
+        {KICK_FRAMES.map((src, i) => (
+          <Image
+            key={src}
+            src={src}
+            alt={`Kick frame ${i + 1}`}
+            fill
+            className={`object-contain transition-opacity duration-200 ${
+              i === frameIndex ? 'opacity-100' : 'opacity-0'
+            }`}
+            style={{
+              filter: 'drop-shadow(0 0 20px rgba(0,0,0,0.8))',
+              transform: i === 2 ? 'scale(1.05)' : 'scale(1)',
+            }}
+            priority
+          />
+        ))}
+      </div>
     </div>
   );
 }

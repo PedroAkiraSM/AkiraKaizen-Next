@@ -85,9 +85,10 @@ export type DifficultyKey = (typeof DIFFICULTY_ORDER)[number];
 
 // ─── Kick Origins & Shot Zones ──────────────────────────────────────────────
 
+// Ball starts from kicker's foot (bottom center of screen where the player sprite is)
 export const KICK_ORIGINS: [number, number][] = [
-  [0.50, 0.95], [0.30, 0.90], [0.70, 0.90],
-  [0.40, 0.85], [0.60, 0.85], [0.20, 0.80], [0.80, 0.80],
+  [0.50, 1.05], [0.48, 1.05], [0.52, 1.05],
+  [0.46, 1.03], [0.54, 1.03],
 ];
 
 export const SHOT_ZONES: Record<string, [number, number]> = {
