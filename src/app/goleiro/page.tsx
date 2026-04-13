@@ -192,18 +192,29 @@ export default function GoleiroPage() {
     startLoop();
   }, [startLoop]);
 
+  // ─── Start camera early (on mount) so warmup runs during menu ─────────
+
+  useEffect(() => {
+    startCamera();
+  }, [startCamera]);
+
   // ─── Navigation handlers ────────────────────────────────────────────────
 
   const handleStart = useCallback(() => {
     soundRef.current?.init();
-    startCamera();
     setScreen('select');
-  }, [startCamera]);
+  }, []);
 
   const handleSelectDifficulty = useCallback((key: DifficultyKey) => {
     const game = gameRef.current;
     const sound = soundRef.current;
     if (!game || !sound) return;
+
+    // Block if warmup not done
+    if (!tracker.warmedUpRef.current) {
+      console.log('Aguardando warmup do MediaPipe...');
+      return;
+    }
 
     sound.init();
     sound.playSelect();
@@ -212,7 +223,7 @@ export default function GoleiroPage() {
     setCurrentConfig({ ...game.config });
     setScreen('game');
     sound.playWhistle();
-  }, []);
+  }, [tracker]);
 
   const handleBack = useCallback(() => {
     setScreen('menu');
@@ -257,6 +268,7 @@ export default function GoleiroPage() {
       <MenuScreen visible={screen === 'menu'} onStart={handleStart} />
       <SelectScreen
         visible={screen === 'select'}
+        ready={tracker.warmedUpRef.current}
         onSelect={handleSelectDifficulty}
         onBack={handleBack}
       />

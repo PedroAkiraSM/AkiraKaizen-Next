@@ -4,11 +4,12 @@ import { DIFF_CARDS, DIFFICULTIES, type DifficultyKey } from '../lib/constants';
 
 interface SelectScreenProps {
   visible: boolean;
+  ready: boolean;
   onSelect: (key: DifficultyKey) => void;
   onBack: () => void;
 }
 
-export default function SelectScreen({ visible, onSelect, onBack }: SelectScreenProps) {
+export default function SelectScreen({ visible, ready, onSelect, onBack }: SelectScreenProps) {
   return (
     <div
       className={`fixed inset-0 flex flex-col items-center justify-center z-10 p-4 transition-opacity duration-400
@@ -20,7 +21,7 @@ export default function SelectScreen({ visible, onSelect, onBack }: SelectScreen
       }}
     >
       <h2
-        className="text-white mb-6"
+        className="text-white mb-4"
         style={{
           fontFamily: 'var(--font-russo)',
           fontSize: 'clamp(1.5rem, 4vw, 2.5rem)',
@@ -28,6 +29,12 @@ export default function SelectScreen({ visible, onSelect, onBack }: SelectScreen
       >
         ESCOLHA A DIFICULDADE
       </h2>
+
+      {!ready && (
+        <div className="mb-4 px-4 py-2 rounded-full bg-yellow-500/20 text-yellow-300 text-sm font-semibold animate-pulse">
+          Preparando câmera e detecção...
+        </div>
+      )}
 
       <div className="grid grid-cols-2 gap-4 max-w-[700px] w-full px-2 max-sm:gap-3">
         {DIFF_CARDS.map(({ key, emoji, bg, tags }) => {
