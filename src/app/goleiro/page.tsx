@@ -112,19 +112,13 @@ export default function GoleiroPage() {
 
   // ─── Game loop callback ─────────────────────────────────────────────────
 
-  // Track detection frames separately from render frames
-  const detectFrameRef = useRef(0);
-  const DETECT_EVERY_N_FRAMES = 3; // detect hands every 3rd frame, render at 60fps
-
   const onFrame = useCallback((dt: number, now: number) => {
     const game = gameRef.current;
     const sound = soundRef.current;
     if (!game || !sound) return;
 
-    // Only run MediaPipe detection every Nth frame to avoid blocking the main thread
-    detectFrameRef.current++;
-    if (detectFrameRef.current >= DETECT_EVERY_N_FRAMES && tracker.readyRef.current) {
-      detectFrameRef.current = 0;
+    // update() is now instant — just reads latest worker data + applies smoothing
+    if (tracker.readyRef.current) {
       handsRef.current = tracker.update();
     }
 
