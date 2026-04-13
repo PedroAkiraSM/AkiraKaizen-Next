@@ -3,28 +3,31 @@
 import { useRef, useCallback, useEffect } from 'react';
 import type { HandData } from '../lib/constants';
 
-// Smoothing factor: 0 = no smoothing, 1 = frozen
-const SMOOTH_FACTOR = 0.35;
-const SEND_INTERVAL_MS = 50; // Send frames to worker every 50ms (~20fps detection)
-
-interface RawHand {
-  cx: number;
-  cy: number;
-  xMin: number;
-  yMin: number;
-  xMax: number;
-  yMax: number;
-  angle: number;
-  side?: 'ESQUERDA' | 'DIREITA';
+/* eslint-disable @typescript-eslint/no-explicit-any */
+interface MediaPipeLandmarker {
+  detectForVideo(video: HTMLVideoElement, timestamp: number): {
+    landmarks?: Array<Array<{ x: number; y: number; z: number }>>;
+    handednesses?: Array<Array<{ categoryName: string }>>;
+  };
 }
 
+type MediaPipeModule = {
+  FilesetResolver: { forVisionTasks(wasmPath: string): Promise<any> };
+  HandLandmarker: { createFromOptions(vision: any, opts: any): Promise<MediaPipeLandmarker> };
+};
+
+async function loadMediaPipe(): Promise<MediaPipeModule> {
+  const importFn = new Function('url', 'return import(url)') as (url: string) => Promise<any>;
+  return importFn('https://cdn.jsdelivr.net/npm/@mediapipe/tasks-vision@latest/vision_bundle.mjs');
+}
+/* eslint-enable @typescript-eslint/no-explicit-any */
+
+const SMOOTH_FACTOR = 0.35;
+const WARMUP_FRAMES = 30;
+
 interface SmoothedHand {
-  cx: number;
-  cy: number;
-  xMin: number;
-  yMin: number;
-  xMax: number;
-  yMax: number;
+  cx: number; cy: number;
+  xMin: number; yMin: number; xMax: number; yMax: number;
   angle: number;
 }
 
@@ -32,116 +35,140 @@ function lerp(a: number, b: number, t: number): number {
   return a + (b - a) * t;
 }
 
-/**
- * Hand tracking via Web Worker.
- * MediaPipe runs entirely off the main thread.
- * Main thread only sends video frames and receives hand positions.
- */
 export function useHandTracking(videoRef: React.RefObject<HTMLVideoElement | null>) {
-  const workerRef = useRef<Worker | null>(null);
+  const landmarkerRef = useRef<MediaPipeLandmarker | null>(null);
   const readyRef = useRef(false);
   const warmedUpRef = useRef(false);
   const handsRef = useRef<HandData[]>([]);
-  const rawHandsRef = useRef<RawHand[]>([]);
+  const lastTimestampRef = useRef(-1);
   const smoothRef = useRef<Map<string, SmoothedHand>>(new Map());
-  const sendIntervalRef = useRef<ReturnType<typeof setInterval> | null>(null);
-  const canvasRef = useRef<OffscreenCanvas | null>(null);
-  const ctxRef = useRef<OffscreenCanvasRenderingContext2D | null>(null);
 
   const init = useCallback(async () => {
-    if (workerRef.current) return;
-
-    // Create worker
-    const worker = new Worker('/workers/handWorker.js', { type: 'module' });
-    workerRef.current = worker;
-
-    worker.onmessage = (e) => {
-      if (e.data.type === 'ready') {
-        readyRef.current = true;
-        warmedUpRef.current = true;
-        console.log('Hand tracking Worker ready!');
-        startSendingFrames();
-      } else if (e.data.type === 'hands') {
-        rawHandsRef.current = e.data.hands;
-      }
-    };
-
-    worker.postMessage({ type: 'init' });
-  }, []);
-
-  const startSendingFrames = useCallback(() => {
-    if (sendIntervalRef.current) return;
-
-    // Create offscreen canvas for capturing frames
-    canvasRef.current = new OffscreenCanvas(320, 240);
-    ctxRef.current = canvasRef.current.getContext('2d');
-
-    sendIntervalRef.current = setInterval(() => {
-      const video = videoRef.current;
-      const worker = workerRef.current;
-      const canvas = canvasRef.current;
-      const ctx = ctxRef.current;
-      if (!video || !worker || !canvas || !ctx || video.readyState < 2) return;
-
-      // Draw video frame to small offscreen canvas (320x240 for speed)
-      canvas.width = 320;
-      canvas.height = 240;
-      ctx.drawImage(video, 0, 0, 320, 240);
-
-      // Create ImageBitmap and send to worker (transferable = zero-copy)
-      createImageBitmap(canvas).then((bitmap) => {
-        worker.postMessage(
-          { type: 'frame', bitmap, timestamp: performance.now() },
-          [bitmap] // Transfer ownership
-        );
+    if (landmarkerRef.current) return;
+    try {
+      const { FilesetResolver, HandLandmarker } = await loadMediaPipe();
+      const fs = await FilesetResolver.forVisionTasks(
+        'https://cdn.jsdelivr.net/npm/@mediapipe/tasks-vision@latest/wasm'
+      );
+      const landmarker = await HandLandmarker.createFromOptions(fs, {
+        baseOptions: {
+          modelAssetPath:
+            'https://storage.googleapis.com/mediapipe-models/hand_landmarker/hand_landmarker/float16/latest/hand_landmarker.task',
+          delegate: 'GPU',
+        },
+        runningMode: 'VIDEO',
+        numHands: 2,
+        minHandDetectionConfidence: 0.55,
+        minHandPresenceConfidence: 0.55,
+        minTrackingConfidence: 0.45,
       });
-    }, SEND_INTERVAL_MS);
+      landmarkerRef.current = landmarker;
+
+      // Warmup
+      const video = videoRef.current;
+      const doWarmup = (frames: number) => {
+        if (frames >= WARMUP_FRAMES || !video) {
+          readyRef.current = true;
+          warmedUpRef.current = true;
+          console.log('MediaPipe ready!');
+          return;
+        }
+        if (video.readyState < 2) {
+          setTimeout(() => doWarmup(frames), 100);
+          return;
+        }
+        try {
+          const now = performance.now();
+          if (now > lastTimestampRef.current) {
+            landmarker.detectForVideo(video, now);
+            lastTimestampRef.current = now;
+          }
+        } catch { /* ignore */ }
+        requestAnimationFrame(() => doWarmup(frames + 1));
+      };
+      doWarmup(0);
+    } catch (e) {
+      console.error('Hand tracking init failed:', e);
+    }
   }, [videoRef]);
 
-  // Called every frame from game loop — just applies smoothing to latest raw data
+  // Called from game loop — runs detection and returns smoothed hands
   const update = useCallback((): HandData[] => {
-    const rawHands = rawHandsRef.current;
-    const hands: HandData[] = [];
+    if (!readyRef.current || !landmarkerRef.current || !videoRef.current) return handsRef.current;
+    const video = videoRef.current;
+    if (video.readyState < 2) return handsRef.current;
 
-    for (let i = 0; i < rawHands.length; i++) {
-      const raw = rawHands[i];
-      const slotKey = `hand_${i}`;
-      const prev = smoothRef.current.get(slotKey);
+    const now = performance.now();
+    if (now <= lastTimestampRef.current) return handsRef.current;
+    lastTimestampRef.current = now;
 
-      let smoothed: SmoothedHand;
-      const t = 1 - SMOOTH_FACTOR;
-
-      if (prev) {
-        smoothed = {
-          cx: lerp(prev.cx, raw.cx, t),
-          cy: lerp(prev.cy, raw.cy, t),
-          xMin: lerp(prev.xMin, raw.xMin, t),
-          yMin: lerp(prev.yMin, raw.yMin, t),
-          xMax: lerp(prev.xMax, raw.xMax, t),
-          yMax: lerp(prev.yMax, raw.yMax, t),
-          angle: lerp(prev.angle, raw.angle, t),
-        };
-      } else {
-        smoothed = {
-          cx: raw.cx, cy: raw.cy,
-          xMin: raw.xMin, yMin: raw.yMin,
-          xMax: raw.xMax, yMax: raw.yMax,
-          angle: raw.angle,
-        };
-      }
-      smoothRef.current.set(slotKey, smoothed);
-
-      hands.push({
-        center: [smoothed.cx, smoothed.cy],
-        bbox: [smoothed.xMin, smoothed.yMin, smoothed.xMax, smoothed.yMax],
-        angle: smoothed.angle,
-        side: (raw.side as HandData['side']) || (smoothed.cx < 0.5 ? 'ESQUERDA' : 'DIREITA'),
-      });
+    let result;
+    try {
+      result = landmarkerRef.current.detectForVideo(video, now);
+    } catch {
+      return handsRef.current;
     }
 
-    // Clean up smoothing for disappeared hands
-    if (rawHands.length < smoothRef.current.size) {
-      const activeSlots = new Set(rawHands.map((_, i) => `hand_${i}`));
+    const hands: HandData[] = [];
+    if (result.landmarks) {
+      for (let i = 0; i < result.landmarks.length; i++) {
+        const lms = result.landmarks[i];
+        let rawXMin = 1, rawXMax = 0, yMinVal = 1, yMaxVal = 0;
+        for (let j = 0; j < lms.length; j++) {
+          const lx = lms[j].x, ly = lms[j].y;
+          if (lx < rawXMin) rawXMin = lx;
+          if (lx > rawXMax) rawXMax = lx;
+          if (ly < yMinVal) yMinVal = ly;
+          if (ly > yMaxVal) yMaxVal = ly;
+        }
+
+        const margin = 0.03;
+        const xMin = Math.max(0, 1 - rawXMax - margin);
+        const yMin = Math.max(0, yMinVal - margin);
+        const xMax = Math.min(1, 1 - rawXMin + margin);
+        const yMax = Math.min(1, yMaxVal + margin);
+        const cx = (xMin + xMax) / 2;
+        const cy = (yMin + yMax) / 2;
+
+        const wrist = lms[0];
+        const midBase = lms[9];
+        const dx = -(midBase.x - wrist.x);
+        const dy = midBase.y - wrist.y;
+        const rawAngle = Math.atan2(dx, -dy) * (180 / Math.PI);
+
+        // Smoothing
+        const slotKey = `hand_${i}`;
+        const prev = smoothRef.current.get(slotKey);
+        const t = 1 - SMOOTH_FACTOR;
+        const smoothed: SmoothedHand = prev ? {
+          cx: lerp(prev.cx, cx, t), cy: lerp(prev.cy, cy, t),
+          xMin: lerp(prev.xMin, xMin, t), yMin: lerp(prev.yMin, yMin, t),
+          xMax: lerp(prev.xMax, xMax, t), yMax: lerp(prev.yMax, yMax, t),
+          angle: lerp(prev.angle, rawAngle, t),
+        } : { cx, cy, xMin, yMin, xMax, yMax, angle: rawAngle };
+        smoothRef.current.set(slotKey, smoothed);
+
+        hands.push({
+          center: [smoothed.cx, smoothed.cy],
+          bbox: [smoothed.xMin, smoothed.yMin, smoothed.xMax, smoothed.yMax],
+          angle: smoothed.angle,
+          side: '?',
+        });
+      }
+
+      // Assign side by position
+      if (hands.length === 2) {
+        if (hands[0].center[0] < hands[1].center[0]) {
+          hands[0].side = 'ESQUERDA'; hands[1].side = 'DIREITA';
+        } else {
+          hands[0].side = 'DIREITA'; hands[1].side = 'ESQUERDA';
+        }
+      } else if (hands.length === 1) {
+        hands[0].side = hands[0].center[0] < 0.5 ? 'ESQUERDA' : 'DIREITA';
+      }
+
+      // Clean unused slots
+      const activeSlots = new Set(result.landmarks.map((_: unknown, i: number) => `hand_${i}`));
       for (const key of smoothRef.current.keys()) {
         if (!activeSlots.has(key)) smoothRef.current.delete(key);
       }
@@ -149,14 +176,12 @@ export function useHandTracking(videoRef: React.RefObject<HTMLVideoElement | nul
 
     handsRef.current = hands;
     return hands;
-  }, []);
+  }, [videoRef]);
 
   useEffect(() => {
     return () => {
-      if (sendIntervalRef.current) clearInterval(sendIntervalRef.current);
-      workerRef.current?.terminate();
-      workerRef.current = null;
       readyRef.current = false;
+      landmarkerRef.current = null;
       smoothRef.current.clear();
     };
   }, []);

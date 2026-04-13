@@ -119,13 +119,17 @@ export default function GoleiroPage() {
 
   // ─── Game loop callback ─────────────────────────────────────────────────
 
+  const detectFrameRef = useRef(0);
+
   const onFrame = useCallback((dt: number, now: number) => {
     const game = gameRef.current;
     const sound = soundRef.current;
     if (!game || !sound) return;
 
-    // update() is now instant — just reads latest worker data + applies smoothing
-    if (tracker.readyRef.current) {
+    // Run detection every 3rd frame to avoid blocking render
+    detectFrameRef.current++;
+    if (detectFrameRef.current >= 3 && tracker.readyRef.current) {
+      detectFrameRef.current = 0;
       handsRef.current = tracker.update();
     }
 
