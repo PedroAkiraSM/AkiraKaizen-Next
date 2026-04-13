@@ -14,8 +14,8 @@ import type { HandData } from '../lib/constants';
  * The main thread NEVER runs MediaPipe, so the game loop is never blocked.
  */
 
-const SMOOTH_FACTOR = 0.35;
-const SEND_INTERVAL_MS = 80; // Send frames every 80ms (~12fps detection)
+const SMOOTH_FACTOR = 0.12; // Lower = more responsive (less smoothing)
+const SEND_INTERVAL_MS = 45; // Send frames every 45ms (~22fps attempts)
 
 interface RawHand {
   cx: number; cy: number;
